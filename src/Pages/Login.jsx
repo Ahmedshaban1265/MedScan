@@ -11,6 +11,7 @@ const Login = () => {
 
     const [message, setMessage] = useState('')
     const [messageType, setMessageType] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
 
     const { setAuth, login } = useAuth()
@@ -20,6 +21,7 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
 
         const loginData = {
             email: email,
@@ -37,15 +39,15 @@ const Login = () => {
                 body: JSON.stringify(loginData),
             })
 
-            if (response.ok) {
-                const responseData = await response.json()
-                
-                setMessage('تم تسجيل الدخول بنجاح!')
+            const responseData = await response.json()
+
+            if (response.ok && responseData.success) {
+                setMessage('Login successful!')
                 setMessageType('success')
 
                 // Handle successful login
-                login(responseData.userName || responseData.email)
-                setAuth(responseData.isAuth || true)
+                login(responseData.data?.userName || responseData.data?.email || email)
+                setAuth(true)
                 
                 console.log('Login successful:', responseData)
 
@@ -54,30 +56,18 @@ const Login = () => {
                 }, 2000);
 
             } else {
-                setMessage('فشل في تسجيل الدخول')
+                setMessage(responseData.message || 'Login failed')
                 setMessageType('failed')
                 
-                try {
-                    const errorData = await response.json()
-                    console.error('Login error:', errorData);
-                    
-                    // Handle specific error messages from API
-                    if (errorData.message) {
-                        setMessage(errorData.message)
-                    } else if (errorData.errors) {
-                        const errorMessages = Object.values(errorData.errors).flat().join(', ')
-                        setMessage(errorMessages)
-                    }
-                } catch (e) {
-                    console.error('Error parsing error response:', e);
-                    setMessage('حدث خطأ في تسجيل الدخول')
-                }
+                console.error('Login error:', responseData);
             }
 
         } catch (e) {
             console.log('Network error:', e)
-            setMessage('خطأ في الاتصال بالخادم')
+            setMessage('Server connection error. Please check your internet connection.')
             setMessageType('failed')
+        } finally {
+            setIsLoading(false);
         }
 
         // Clear form
@@ -98,42 +88,48 @@ const Login = () => {
                 <img className=' z-20  w-72' src={logo} />
             </div>
             <div className='bg-white w-full lg:w-1/2   rounded-e-3xl px-8 py-14'>
-                <h2 className='text-center font-semibold text-2xl py-10'>تسجيل الدخول إلى حسابك!</h2>
+                <h2 className='text-center font-semibold text-2xl py-10'>Sign in to your account!</h2>
 
                 <form onSubmit={handleSubmit}>
 
                     <div className='py-2'>
-                        <label className='block  mb-2 text-[14px]'>البريد الإلكتروني</label>
+                        <label className='block  mb-2 text-[14px]'>Email</label>
                         <input 
                             value={email} 
                             onChange={(e) => setMail(e.target.value)} 
-                            placeholder='البريد الإلكتروني' 
+                            placeholder='Email' 
                             type="email"
                             required
-                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm' 
+                            disabled={isLoading}
+                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
                         />
                     </div>
 
                     <div className='py-2'>
-                        <label className='block  mb-2 text-[14px]'>كلمة المرور</label>
+                        <label className='block  mb-2 text-[14px]'>Password</label>
                         <input 
                             value={password} 
                             onChange={(e) => setPassword(e.target.value)} 
                             type='password' 
-                            placeholder='كلمة المرور' 
+                            placeholder='Password' 
                             required
-                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm' 
+                            disabled={isLoading}
+                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
                         />
                         <div className='text-right mt-1'>
                             <Link to={'/reset-password'} className='text-Primary text-sm hover:underline'>
-                                نسيت كلمة المرور؟
+                                Forgot password?
                             </Link>
                         </div>
                     </div>
 
                     <div className='flex justify-center items-center my-2'>
-                        <button type='submit' className='bg-Primary w-full py-2 rounded-lg text-white font-bold text-lg'>
-                            تسجيل الدخول
+                        <button 
+                            type='submit' 
+                            disabled={isLoading}
+                            className='bg-Primary w-full py-2 rounded-lg text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed'
+                        >
+                            {isLoading ? 'Signing in...' : 'Sign In'}
                         </button>
                     </div>
 
@@ -146,14 +142,14 @@ const Login = () => {
                 </form>
 
                 <div className='text-center py-5'>
-                    <p className='py-2 text-Secondary-darkGray text-sm'>تسجيل الدخول باستخدام</p>
+                    <p className='py-2 text-Secondary-darkGray text-sm'>Sign in with</p>
                     <div className='flex items-center justify-center gap-4 py-2'>
                         <img src={face} alt="Facebook" />
                         <img src={google} alt="Google" />
                         <img src={apple} alt="Apple" />
                     </div>
                     <p className='pt-2 text-black-medium'>
-                        ليس لديك حساب؟ <Link to={'/signUp'} className='text-Primary'>إنشاء حساب</Link>
+                        Don't have an account? <Link to={'/signUp'} className='text-Primary'>Create account</Link>
                     </p>
                 </div>
 

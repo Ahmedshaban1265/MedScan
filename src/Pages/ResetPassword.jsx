@@ -11,9 +11,11 @@ const ResetPassword = () => {
     const [confirmPassword, setConfirmPassword] = useState('')
     const [message, setMessage] = useState('')
     const [messageType, setMessageType] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleRequestReset = async (e) => {
         e.preventDefault()
+        setIsLoading(true)
 
         const apiUrl = 'http://medscanapi.runasp.net/api/Auth/request-password-reset'
 
@@ -26,19 +28,22 @@ const ResetPassword = () => {
                 body: JSON.stringify({ email }),
             })
 
-            if (response.ok) {
-                setMessage('تم إرسال رمز إعادة التعيين إلى بريدك الإلكتروني')
+            const responseData = await response.json()
+
+            if (response.ok && responseData.success) {
+                setMessage('Reset code sent to your email')
                 setMessageType('success')
                 setStep(2)
             } else {
-                const errorData = await response.json()
-                setMessage(errorData.message || 'فشل في إرسال رمز إعادة التعيين')
+                setMessage(responseData.message || 'Failed to send reset code')
                 setMessageType('failed')
             }
         } catch (error) {
             console.error('Error:', error)
-            setMessage('خطأ في الاتصال بالخادم')
+            setMessage('Server connection error. Please check your internet connection.')
             setMessageType('failed')
+        } finally {
+            setIsLoading(false)
         }
 
         setTimeout(() => setMessage(''), 5000)
@@ -46,6 +51,7 @@ const ResetPassword = () => {
 
     const handleVerifyCode = async (e) => {
         e.preventDefault()
+        setIsLoading(true)
 
         const apiUrl = 'http://medscanapi.runasp.net/api/Auth/verify-reset-code'
 
@@ -61,19 +67,22 @@ const ResetPassword = () => {
                 }),
             })
 
-            if (response.ok) {
-                setMessage('تم التحقق من الرمز بنجاح')
+            const responseData = await response.json()
+
+            if (response.ok && responseData.success) {
+                setMessage('Code verified successfully')
                 setMessageType('success')
                 setStep(3)
             } else {
-                const errorData = await response.json()
-                setMessage(errorData.message || 'رمز التحقق غير صحيح')
+                setMessage(responseData.message || 'Invalid verification code')
                 setMessageType('failed')
             }
         } catch (error) {
             console.error('Error:', error)
-            setMessage('خطأ في الاتصال بالخادم')
+            setMessage('Server connection error. Please check your internet connection.')
             setMessageType('failed')
+        } finally {
+            setIsLoading(false)
         }
 
         setTimeout(() => setMessage(''), 5000)
@@ -81,10 +90,20 @@ const ResetPassword = () => {
 
     const handleResetPassword = async (e) => {
         e.preventDefault()
+        setIsLoading(true)
 
         if (newPassword !== confirmPassword) {
-            setMessage('كلمات المرور غير متطابقة')
+            setMessage('Passwords do not match')
             setMessageType('failed')
+            setIsLoading(false)
+            setTimeout(() => setMessage(''), 5000)
+            return
+        }
+
+        if (newPassword.length < 6) {
+            setMessage('Password must be at least 6 characters long')
+            setMessageType('failed')
+            setIsLoading(false)
             setTimeout(() => setMessage(''), 5000)
             return
         }
@@ -104,22 +123,25 @@ const ResetPassword = () => {
                 }),
             })
 
-            if (response.ok) {
-                setMessage('تم تغيير كلمة المرور بنجاح')
+            const responseData = await response.json()
+
+            if (response.ok && responseData.success) {
+                setMessage('Password changed successfully')
                 setMessageType('success')
                 
                 setTimeout(() => {
                     window.location.href = '/login'
                 }, 2000)
             } else {
-                const errorData = await response.json()
-                setMessage(errorData.message || 'فشل في تغيير كلمة المرور')
+                setMessage(responseData.message || 'Failed to change password')
                 setMessageType('failed')
             }
         } catch (error) {
             console.error('Error:', error)
-            setMessage('خطأ في الاتصال بالخادم')
+            setMessage('Server connection error. Please check your internet connection.')
             setMessageType('failed')
+        } finally {
+            setIsLoading(false)
         }
 
         setTimeout(() => setMessage(''), 5000)
@@ -136,22 +158,27 @@ const ResetPassword = () => {
                     
                     {step === 1 && (
                         <>
-                            <h2 className='text-center font-semibold text-2xl py-10'>إعادة تعيين كلمة المرور</h2>
+                            <h2 className='text-center font-semibold text-2xl py-10'>Reset Password</h2>
                             <form onSubmit={handleRequestReset}>
                                 <div className='py-2'>
-                                    <label className='block mb-2 text-[14px]'>البريد الإلكتروني</label>
+                                    <label className='block mb-2 text-[14px]'>Email</label>
                                     <input 
                                         value={email} 
                                         onChange={(e) => setEmail(e.target.value)} 
-                                        placeholder='البريد الإلكتروني' 
+                                        placeholder='Email' 
                                         type="email"
                                         required
-                                        className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm' 
+                                        disabled={isLoading}
+                                        className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
                                     />
                                 </div>
                                 <div className='flex justify-center items-center my-4'>
-                                    <button type='submit' className='bg-Primary w-full py-2 rounded-lg text-white font-bold text-lg'>
-                                        إرسال رمز إعادة التعيين
+                                    <button 
+                                        type='submit' 
+                                        disabled={isLoading}
+                                        className='bg-Primary w-full py-2 rounded-lg text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed'
+                                    >
+                                        {isLoading ? 'Sending...' : 'Send Reset Code'}
                                     </button>
                                 </div>
                             </form>
@@ -160,21 +187,26 @@ const ResetPassword = () => {
 
                     {step === 2 && (
                         <>
-                            <h2 className='text-center font-semibold text-2xl py-10'>التحقق من الرمز</h2>
+                            <h2 className='text-center font-semibold text-2xl py-10'>Verify Code</h2>
                             <form onSubmit={handleVerifyCode}>
                                 <div className='py-2'>
-                                    <label className='block mb-2 text-[14px]'>رمز التحقق</label>
+                                    <label className='block mb-2 text-[14px]'>Verification Code</label>
                                     <input 
                                         value={resetCode} 
                                         onChange={(e) => setResetCode(e.target.value)} 
-                                        placeholder='أدخل رمز التحقق' 
+                                        placeholder='Enter verification code' 
                                         required
-                                        className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm' 
+                                        disabled={isLoading}
+                                        className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
                                     />
                                 </div>
                                 <div className='flex justify-center items-center my-4'>
-                                    <button type='submit' className='bg-Primary w-full py-2 rounded-lg text-white font-bold text-lg'>
-                                        التحقق من الرمز
+                                    <button 
+                                        type='submit' 
+                                        disabled={isLoading}
+                                        className='bg-Primary w-full py-2 rounded-lg text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed'
+                                    >
+                                        {isLoading ? 'Verifying...' : 'Verify Code'}
                                     </button>
                                 </div>
                             </form>
@@ -183,33 +215,39 @@ const ResetPassword = () => {
 
                     {step === 3 && (
                         <>
-                            <h2 className='text-center font-semibold text-2xl py-10'>كلمة المرور الجديدة</h2>
+                            <h2 className='text-center font-semibold text-2xl py-10'>New Password</h2>
                             <form onSubmit={handleResetPassword}>
                                 <div className='py-2'>
-                                    <label className='block mb-2 text-[14px]'>كلمة المرور الجديدة</label>
+                                    <label className='block mb-2 text-[14px]'>New Password</label>
                                     <input 
                                         value={newPassword} 
                                         onChange={(e) => setNewPassword(e.target.value)} 
                                         type='password' 
-                                        placeholder='كلمة المرور الجديدة' 
+                                        placeholder='New Password (min 6 characters)' 
                                         required
-                                        className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm' 
+                                        disabled={isLoading}
+                                        className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
                                     />
                                 </div>
                                 <div className='py-2'>
-                                    <label className='block mb-2 text-[14px]'>تأكيد كلمة المرور</label>
+                                    <label className='block mb-2 text-[14px]'>Confirm Password</label>
                                     <input 
                                         value={confirmPassword} 
                                         onChange={(e) => setConfirmPassword(e.target.value)} 
                                         type='password' 
-                                        placeholder='تأكيد كلمة المرور' 
+                                        placeholder='Confirm Password' 
                                         required
-                                        className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm' 
+                                        disabled={isLoading}
+                                        className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
                                     />
                                 </div>
                                 <div className='flex justify-center items-center my-4'>
-                                    <button type='submit' className='bg-Primary w-full py-2 rounded-lg text-white font-bold text-lg'>
-                                        تغيير كلمة المرور
+                                    <button 
+                                        type='submit' 
+                                        disabled={isLoading}
+                                        className='bg-Primary w-full py-2 rounded-lg text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed'
+                                    >
+                                        {isLoading ? 'Changing Password...' : 'Change Password'}
                                     </button>
                                 </div>
                             </form>
@@ -224,7 +262,7 @@ const ResetPassword = () => {
 
                     <div className='text-center py-5'>
                         <p className='pt-2 text-black-medium'>
-                            تذكرت كلمة المرور؟ <Link to={'/login'} className='text-Primary'>تسجيل الدخول</Link>
+                            Remember your password? <Link to={'/login'} className='text-Primary'>Sign in</Link>
                         </p>
                     </div>
 

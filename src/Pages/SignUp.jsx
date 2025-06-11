@@ -12,6 +12,7 @@ const SignUp = () => {
     const { login, setAuth } = useAuth()
     const [message, setMessage] = useState('')
     const [messageType, setMessageType] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
     const [registerData, setRegisterData] = useState({
         firstName: '',
@@ -35,11 +36,21 @@ const SignUp = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
 
         // Basic validation
         if (registerData.password !== registerData.confirmPassword) {
-            setMessage('كلمات المرور غير متطابقة')
+            setMessage('Passwords do not match')
             setMessageType('failed')
+            setIsLoading(false);
+            setTimeout(() => setMessage(''), 5000)
+            return
+        }
+
+        if (registerData.password.length < 6) {
+            setMessage('Password must be at least 6 characters long')
+            setMessageType('failed')
+            setIsLoading(false);
             setTimeout(() => setMessage(''), 5000)
             return
         }
@@ -74,18 +85,18 @@ const SignUp = () => {
                 body: JSON.stringify(apiData),
             })
 
-            if (response.ok) {
-                const responseData = await response.json()
-                
-                setMessage('تم إنشاء الحساب بنجاح!')
+            const responseData = await response.json()
+
+            if (response.ok && responseData.success) {
+                setMessage('Account created successfully!')
                 setMessageType('success')
 
                 console.log('Registration successful:', responseData)
 
                 // Auto login after successful registration
-                if (responseData.userName || responseData.email) {
-                    login(responseData.userName || responseData.email)
-                    setAuth(responseData.isAuth || true)
+                if (responseData.data?.userName || responseData.data?.email) {
+                    login(responseData.data.userName || responseData.data.email)
+                    setAuth(true)
                 }
 
                 setTimeout(() => {
@@ -93,29 +104,17 @@ const SignUp = () => {
                 }, 2000)
 
             } else {
-                setMessage('فشل في إنشاء الحساب')
+                setMessage(responseData.message || 'Account creation failed')
                 setMessageType('failed')
                 
-                try {
-                    const errorData = await response.json()
-                    console.error('Registration error:', errorData);
-                    
-                    // Handle specific error messages from API
-                    if (errorData.message) {
-                        setMessage(errorData.message)
-                    } else if (errorData.errors) {
-                        const errorMessages = Object.values(errorData.errors).flat().join(', ')
-                        setMessage(errorMessages)
-                    }
-                } catch (error) {
-                    console.error('Error parsing error response:', error);
-                    setMessage('حدث خطأ في إنشاء الحساب')
-                }
+                console.error('Registration error:', responseData);
             }
         } catch (e) {
             console.error('Network error:', e)
-            setMessage('خطأ في الاتصال بالخادم')
+            setMessage('Server connection error. Please check your internet connection.')
             setMessageType('failed')
+        } finally {
+            setIsLoading(false);
         }
 
         // Clear form
@@ -149,99 +148,110 @@ const SignUp = () => {
                     <img className=' z-20 w-72' src={logo} />
                 </div>
                 <form onSubmit={handleSubmit} className='bg-white w-full lg:w-1/2   rounded-e-3xl px-8 py-14'>
-                    <h2 className='text-center font-semibold text-2xl py-5'>إنشاء حسابك!</h2>
+                    <h2 className='text-center font-semibold text-2xl py-5'>Create your account!</h2>
                     
                     <div className='flex gap-3 py-2'>
                         <div className=''>
-                            <label className='block  mb-2 text-[14px]'>الاسم الأول</label>
+                            <label className='block  mb-2 text-[14px]'>First Name</label>
                             <input 
                                 onChange={handleRegisterChange} 
                                 name='firstName' 
                                 value={registerData.firstName} 
-                                placeholder='الاسم الأول' 
+                                placeholder='First Name' 
                                 required
-                                className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm ' 
+                                disabled={isLoading}
+                                className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
                             />
                         </div>
                         <div>
-                            <label className='block  mb-2 text-[14px]'>الاسم الأخير</label>
+                            <label className='block  mb-2 text-[14px]'>Last Name</label>
                             <input 
                                 onChange={handleRegisterChange} 
                                 name='lastName' 
                                 value={registerData.lastName} 
-                                placeholder='الاسم الأخير' 
+                                placeholder='Last Name' 
                                 required
-                                className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm' 
+                                disabled={isLoading}
+                                className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
                             />
                         </div>
                     </div>
 
                     <div className='py-2'>
-                        <label className='block  mb-2 text-[14px]'>اسم المستخدم</label>
+                        <label className='block  mb-2 text-[14px]'>Username</label>
                         <input 
                             onChange={handleRegisterChange} 
                             name='userName' 
                             value={registerData.userName} 
-                            placeholder='اسم المستخدم' 
+                            placeholder='Username' 
                             required
-                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm' 
+                            disabled={isLoading}
+                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
                         />
                     </div>
 
                     <div className='py-2'>
-                        <label className='block  mb-2 text-[14px]'>البريد الإلكتروني</label>
+                        <label className='block  mb-2 text-[14px]'>Email</label>
                         <input 
                             onChange={handleRegisterChange} 
                             name='email' 
                             value={registerData.email} 
-                            placeholder='البريد الإلكتروني' 
+                            placeholder='Email' 
                             type="email"
                             required
-                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm' 
+                            disabled={isLoading}
+                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
                         />
                     </div>
 
                     <div className='py-2'>
-                        <label className='block  mb-2 text-[14px]'>كلمة المرور</label>
+                        <label className='block  mb-2 text-[14px]'>Password</label>
                         <input 
                             onChange={handleRegisterChange} 
                             name='password' 
                             value={registerData.password} 
                             type='password' 
-                            placeholder='كلمة المرور' 
+                            placeholder='Password (min 6 characters)' 
                             required
-                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm' 
+                            disabled={isLoading}
+                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
                         />
                     </div>
 
                     <div className='py-2'>
-                        <label className='block  mb-2 text-[14px]'>تأكيد كلمة المرور</label>
+                        <label className='block  mb-2 text-[14px]'>Confirm Password</label>
                         <input 
                             onChange={handleRegisterChange} 
                             name='confirmPassword' 
                             value={registerData.confirmPassword} 
                             type='password' 
-                            placeholder='تأكيد كلمة المرور' 
+                            placeholder='Confirm Password' 
                             required
-                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm' 
+                            disabled={isLoading}
+                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
                         />
                     </div>
 
                     <div className='py-2'>
-                        <label className='block  mb-2 text-[14px]'>رقم الهاتف (اختياري)</label>
+                        <label className='block  mb-2 text-[14px]'>Phone Number (Optional)</label>
                         <input 
                             onChange={handleRegisterChange} 
                             name='phoneNumber' 
                             value={registerData.phoneNumber} 
-                            placeholder='رقم الهاتف' 
+                            placeholder='Phone Number' 
                             type="tel"
-                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm' 
+                            disabled={isLoading}
+                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
                         />
                     </div>
 
                     <div className='flex justify-center items-center my-2 '>
-                        <button className='bg-Primary w-full py-2 rounded-lg text-white font-bold text-lg' type='submit'>
-                            إنشاء حساب
+                        <button 
+                            className='bg-Primary w-full py-2 rounded-lg text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed' 
+                            type='submit'
+                            disabled={isLoading}
+                        >
+                            {isLoading ? 'Creating Account...' : 'Create Account'}
                         </button>
                     </div>
                     
@@ -252,14 +262,14 @@ const SignUp = () => {
                     </div>
 
                     <div className='text-center py-5'>
-                        <p className='py-2 text-Secondary-darkGray text-sm'>إنشاء حساب باستخدام</p>
+                        <p className='py-2 text-Secondary-darkGray text-sm'>Sign up with</p>
                         <div className='flex items-center justify-center gap-4 py-2'>
                             <img src={face} alt="Facebook" />
                             <img src={google} alt="Google" />
                             <img src={apple} alt="Apple" />
                         </div>
                         <p className='pt-2 text-black-medium'>
-                            لديك حساب بالفعل؟ <Link to={'/login'} className='text-Primary'>تسجيل الدخول</Link>
+                            Already have an account? <Link to={'/login'} className='text-Primary'>Sign in</Link>
                         </p>
                     </div>
 
