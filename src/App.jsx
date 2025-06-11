@@ -7,6 +7,7 @@ import AboutUs from "./Pages/AboutUs"
 import ContactUs from "./Pages/ContactUs"
 import Login from "./Pages/Login"
 import SignUp from "./Pages/SignUp"
+import ResetPassword from "./Pages/ResetPassword"
 import Scan from "./Pages/Scan"
 import ScanResult from "./Pages/ScanResult"
 import { AuthProvider } from "./Auth/AuthProvider"
@@ -24,6 +25,7 @@ function App() {
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signUp" element={<SignUp />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/scan" element={<Scan />} />
           <Route path="/scan-result" element={<ScanResult />} />
         </Routes>
