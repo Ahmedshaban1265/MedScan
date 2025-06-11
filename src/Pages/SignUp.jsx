@@ -74,7 +74,7 @@ const SignUp = () => {
 
         console.log('Sending registration data:', apiData);
 
-        const apiUrl = 'http://medscanapi.runasp.net/api/Auth/register'
+        const apiUrl = 'https://medscanapi.runasp.net/api/Auth/register'
 
         try {
             const response = await fetch(apiUrl, {

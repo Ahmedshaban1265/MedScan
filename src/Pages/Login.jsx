@@ -28,7 +28,7 @@ const Login = () => {
             password: password,
         };
 
-        const apiUrl = 'http://medscanapi.runasp.net/api/Auth/login';
+        const apiUrl = 'https://medscanapi.runasp.net/api/Auth/login';
 
         try {
             const response = await fetch(apiUrl, {

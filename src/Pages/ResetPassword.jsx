@@ -17,7 +17,7 @@ const ResetPassword = () => {
         e.preventDefault()
         setIsLoading(true)
 
-        const apiUrl = 'http://medscanapi.runasp.net/api/Auth/request-password-reset'
+        const apiUrl = 'https://medscanapi.runasp.net/api/Auth/request-password-reset'
 
         try {
             const response = await fetch(apiUrl, {
@@ -53,7 +53,7 @@ const ResetPassword = () => {
         e.preventDefault()
         setIsLoading(true)
 
-        const apiUrl = 'http://medscanapi.runasp.net/api/Auth/verify-reset-code'
+        const apiUrl = 'https://medscanapi.runasp.net/api/Auth/verify-reset-code'
 
         try {
             const response = await fetch(apiUrl, {
@@ -108,7 +108,7 @@ const ResetPassword = () => {
             return
         }
 
-        const apiUrl = 'http://medscanapi.runasp.net/api/Auth/reset-password'
+        const apiUrl = 'https://medscanapi.runasp.net/api/Auth/reset-password'
 
         try {
             const response = await fetch(apiUrl, {
