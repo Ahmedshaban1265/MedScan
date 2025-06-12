@@ -46,7 +46,7 @@ const Scan = () => {
 
         try {
             // هذا هو المسار الذي سيتصل بالواجهة الخلفية التي أنشأتها
-            const apiResponse = await fetch("http://localhost:5000/scan", {
+            const apiResponse = await fetch("https://medscanapi-production.up.railway.app/scan", {
                 method: "POST",
                 body: formData,
             } );
