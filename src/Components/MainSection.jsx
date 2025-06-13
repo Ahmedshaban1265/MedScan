@@ -1,4 +1,3 @@
-
 import React from 'react';
 import photo from '../assets/mainPhoto.png';
 import camera from '../assets/icons/camera.png';
@@ -39,10 +38,14 @@ const MainSection = () => {
 
         </div>
 
-        <div className='lg:w-[40%]'>
-          <img className='m-auto' src={arrow} />
-          <p className='text-sm text-Primary font-semibold ps-10 text-start'>please login before start automated scan diagnostics</p>
-        </div>
+        {
+          !auth && (
+            <div className='lg:w-[40%]'>
+              <img className='m-auto' src={arrow} />
+              <p className='text-sm text-Primary font-semibold ps-10 text-start'>please login before start automated scan diagnostics</p>
+            </div>
+          )
+        }
       </div>
       <div className=' m-auto w-full lg:w-[45%] pt-16 lg:pt-0'>
         <img className='w-[600px]' src={photo} alt='Main visual' />
@@ -51,4 +54,4 @@ const MainSection = () => {
   );
 };
 
-export default MainSection;
+export default MainSection;

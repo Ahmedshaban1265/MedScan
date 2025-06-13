@@ -6,7 +6,7 @@ import browser from '../assets/icons/browser.png'
 const Scan = () => {
     const [fileName, setFileName] = useState('');
     const [selectedDisease, setSelectedDisease] = useState('');
-    const [uploadedImage, setUploadedImage] = useState(null); // سيتم تخزين كائن File هنا
+    const [uploadedImage, setUploadedImage] = useState(null); 
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
 
@@ -15,8 +15,7 @@ const Scan = () => {
         const file = event.target.files[0];
         if (file) {
             setFileName(file.name);
-            setUploadedImage(file); // تخزين كائن File الفعلي
-        } else {
+            setUploadedImage(file); 
             setFileName('');
             setUploadedImage(null);
         }
@@ -41,11 +40,11 @@ const Scan = () => {
         }
 
         const formData = new FormData();
-        formData.append("image", uploadedImage); // إرسال كائن File
+        formData.append("image", uploadedImage);
         formData.append("diseaseType", selectedDisease);
 
         try {
-            // هذا هو المسار الذي سيتصل بالواجهة الخلفية التي أنشأتها
+            
             const apiResponse = await fetch("http://127.0.0.1:5000/scan", {
                 method: "POST",
                 body: formData,
@@ -58,12 +57,11 @@ const Scan = () => {
 
             const aiResults = await apiResponse.json();
 
-            // التنقل إلى صفحة النتائج مع النتائج الحقيقية من الـ AI
             navigate("/scan-result", {
                 state: {
                     selectedDisease,
-                    uploadedImage: URL.createObjectURL(uploadedImage), // نمرر URL لعرض الصورة في صفحة النتائج
-                    scanResults: aiResults // النتائج الحقيقية من الـ AI
+                    uploadedImage: URL.createObjectURL(uploadedImage), 
+                    scanResults: aiResults 
                 }
             });
         } catch (error) {
@@ -75,7 +73,7 @@ const Scan = () => {
     return (
         <section className='bg-radial-gradient h-screen flex justify-center items-center'>
             <div className='text-center  text-white border-2 rounded-3xl p-20 '>
-                <h2 className='text-4xl font-[700] pb-14'>Scan Input</h2>
+                <h2 className='text-4xl font-[700] pb-14'>Scan Now</h2>
                 <p className='text-[14] font-semibold'>Choose the type of disease</p>
 
                 <div className='flex justify-center items-center gap-5 py-5'>
