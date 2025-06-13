@@ -147,10 +147,10 @@ const SignUp = () => {
                 <div className='lg:w-1/2 bg-linear-gradient  rounded-s-3xl  hidden lg:flex justify-center items-center '>
                     <img className=' z-20 w-72' src={logo} />
                 </div>
-                <form onSubmit={handleSubmit} className='bg-white w-full lg:w-1/2   rounded-e-3xl px-8 py-14'>
-                    <h2 className='text-center font-semibold text-2xl py-5'>Create your account!</h2>
+                <form onSubmit={handleSubmit} className='bg-white w-full lg:w-1/2 h-full lg:w-1/2 overflow-y-auto  rounded-e-3xl px-8 py-5'>
+                    <h2 className='text-center font-semibold text-2xl py-3'>Create your account!</h2>
                     
-                    <div className='flex gap-3 py-2'>
+                    <div className='flex gap-3 py-1'>
                         <div className=''>
                             <label className='block  mb-2 text-[14px]'>First Name</label>
                             <input 
@@ -177,7 +177,7 @@ const SignUp = () => {
                         </div>
                     </div>
 
-                    <div className='py-2'>
+                    <div className='py-1'>
                         <label className='block  mb-2 text-[14px]'>Username</label>
                         <input 
                             onChange={handleRegisterChange} 
@@ -190,7 +190,7 @@ const SignUp = () => {
                         />
                     </div>
 
-                    <div className='py-2'>
+                    <div className='py-1'>
                         <label className='block  mb-2 text-[14px]'>Email</label>
                         <input 
                             onChange={handleRegisterChange} 
@@ -204,7 +204,7 @@ const SignUp = () => {
                         />
                     </div>
 
-                    <div className='py-2'>
+                    <div className='py-1'>
                         <label className='block  mb-2 text-[14px]'>Password</label>
                         <input 
                             onChange={handleRegisterChange} 
@@ -218,7 +218,7 @@ const SignUp = () => {
                         />
                     </div>
 
-                    <div className='py-2'>
+                    <div className='py-1'>
                         <label className='block  mb-2 text-[14px]'>Confirm Password</label>
                         <input 
                             onChange={handleRegisterChange} 
@@ -232,7 +232,7 @@ const SignUp = () => {
                         />
                     </div>
 
-                    <div className='py-2'>
+                    {/* <div className='py-2'>
                         <label className='block  mb-2 text-[14px]'>Phone Number (Optional)</label>
                         <input 
                             onChange={handleRegisterChange} 
@@ -243,11 +243,11 @@ const SignUp = () => {
                             disabled={isLoading}
                             className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
                         />
-                    </div>
+                    </div> */}
 
-                    <div className='flex justify-center items-center my-2 '>
+                    <div className='flex justify-center items-center my-1 '>
                         <button 
-                            className='bg-Primary w-full py-2 rounded-lg text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed' 
+                            className='bg-Primary w-full py-1 rounded-lg text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed' 
                             type='submit'
                             disabled={isLoading}
                         >
@@ -261,14 +261,14 @@ const SignUp = () => {
                         </p>
                     </div>
 
-                    <div className='text-center py-5'>
-                        <p className='py-2 text-Secondary-darkGray text-sm'>Sign up with</p>
+                    <div className='text-center '>
+                        <p className=' text-Secondary-darkGray text-sm'>Sign up with</p>
                         <div className='flex items-center justify-center gap-4 py-2'>
                             <img src={face} alt="Facebook" />
                             <img src={google} alt="Google" />
                             <img src={apple} alt="Apple" />
                         </div>
-                        <p className='pt-2 text-black-medium'>
+                        <p className=' text-black-medium'>
                             Already have an account? <Link to={'/login'} className='text-Primary'>Sign in</Link>
                         </p>
                     </div>
