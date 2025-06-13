@@ -73,7 +73,7 @@ const Scan = () => {
     return (
         <section className='bg-radial-gradient h-screen flex justify-center items-center'>
             <div className='text-center  text-white border-2 rounded-3xl p-20 '>
-                <h2 className='text-4xl font-[700] pb-14'>Scan Now</h2>
+                <h2 className='text-4xl font-[700] pb-14'>Scan Input</h2>
                 <p className='text-[14] font-semibold'>Choose the type of disease</p>
 
                 <div className='flex justify-center items-center gap-5 py-5'>
