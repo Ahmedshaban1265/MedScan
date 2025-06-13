@@ -1,4 +1,5 @@
-import { BrowserRouter, Route, Router, Routes } from "react-router-dom"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import PrivateRoute from './Auth/PrivateRoute'
 import Home from "./Components/Home"
 import Navbar from "./Components/Navbar"
 import Footer from "./Components/Footer"
@@ -13,7 +14,6 @@ import ScanResult from "./Pages/ScanResult"
 import { AuthProvider } from "./Auth/AuthProvider"
 
 function App() {
-
   return (
     <BrowserRouter>
       <AuthProvider>
@@ -26,12 +26,11 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signUp" element={<SignUp />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/scan" element={<Scan />} />
           <Route path="/scan-result" element={<ScanResult />} />
+          <Route path="/scan" element={ <PrivateRoute> <Scan /> </PrivateRoute>} />
         </Routes>
         <Footer />
       </AuthProvider>
-
     </BrowserRouter>
   )
 }
