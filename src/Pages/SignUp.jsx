@@ -21,10 +21,10 @@ const SignUp = () => {
         email: '',
         password: '',
         confirmPassword: '',
-        phoneNumber: '',
+        phoneNumber: '1000000000',
         gender: '',
         dateOfBirth: '',
-        role: '',
+        role: 'Patient',
         specialization: '',
         bio: '',
         profilePictureUrl: ''
