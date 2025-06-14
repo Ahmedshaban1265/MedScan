@@ -42,7 +42,7 @@ const Scan = () => {
 
         try {
 
-            const apiResponse = await fetch("https://5000-idfry7gmfiaaq6o17hknr-489e3461.manusvm.computer/scan", {
+            const apiResponse = await fetch("https://5000-iapst6l0no28alu0u25js-b78f53d0.manus.computer/scan", {
                 method: "POST",
                 body: formData,
             });
@@ -70,7 +70,7 @@ const Scan = () => {
     return (
         <section className='bg-radial-gradient min-h-screen flex justify-center items-center py-10'>
             <div className='text-center  text-white border-2 rounded-3xl p-20 '>
-                <h2 className='text-4xl font-[700] pb-14'>Scan Input</h2>
+                <h2 className='text-4xl font-[700] pb-14'>Scan Now</h2>
                 <p className='text-[14] font-semibold'>Choose the type of disease</p>
 
                 <div className='flex justify-center items-center gap-5 py-5'>
