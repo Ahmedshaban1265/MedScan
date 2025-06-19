@@ -136,27 +136,31 @@ const PatientProfile = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-                    <div className="flex justify-between items-center">
-                        <div>
+                    {/* تعديل هنا: اجعل المحتوى يتكدس عموديًا على الشاشات الصغيرة، وأفقيًا على الشاشات المتوسطة وما فوق */}
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-center">
+                        {/* قسم معلومات الملف الشخصي */}
+                        <div className="mb-4 md:mb-0"> {/* إضافة هامش سفلي على الجوال، وإزالته على الشاشات الأكبر */}
                             <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
                             <p className="text-gray-600 mt-1">Manage your personal information and appointments</p>
                         </div>
-                        <div className="flex gap-4">
+                        {/* قسم الأزرار */}
+                        {/* تعديل هنا: اجعل الأزرار تتكدس عموديًا على الشاشات الصغيرة، وأفقيًا على الشاشات الصغيرة وما فوق */}
+                        <div className="flex flex-col sm:flex-row gap-4 mt-4 md:mt-0"> {/* إضافة هامش علوي على الجوال، وإزالته على الشاشات الأكبر */}
                             <Link
                                 to="/"
-                                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                                className="w-full sm:w-auto px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                             >
                                 Back to Home
                             </Link>
                             <Link
                                 to="/booking"
-                                className="px-4 py-2 bg-Primary text-white rounded-lg hover:bg-Primary-dark transition-colors"
+                                className="w-full sm:w-auto px-4 py-2 bg-Primary text-white rounded-lg hover:bg-Primary-dark transition-colors"
                             >
                                 Book Appointment
                             </Link>
                             <button
                                 onClick={() => window.location.href = '/logout'}
-                                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                                className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
                             >
                                 Logout
                             </button>
@@ -316,7 +320,7 @@ const PatientProfile = () => {
                                 <div className="flex justify-between">
                                     <span className="text-gray-600">Completed</span>
                                     <span className="font-semibold text-green-600">
-                                        {appointments.filter(apt => apt.status === 'Completed').length}
+                                        {appointments.filter(apt => new Date(apt.appointmentDate) < new Date()).length}
                                     </span>
                                 </div>
                             </div>
@@ -324,46 +328,26 @@ const PatientProfile = () => {
 
                         {/* Recent Appointments */}
                         <div className="bg-white rounded-lg shadow-sm p-6">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-lg font-semibold text-gray-900">Recent Appointments</h3>
-                                <Link
-                                    to="/booking"
-                                    className="text-Primary hover:text-Primary-dark text-sm font-medium"
-                                >
-                                    Book New Appointment →
-                                </Link>
-                            </div>
-
-                            {appointments.length === 0 ? (
-                                <div className="text-center py-8">
-                                    <p className="text-gray-500 mb-4">No appointments yet</p>
-                                    <Link
-                                        to="/booking"
-                                        className="px-4 py-2 bg-Primary text-white rounded-lg hover:bg-Primary-dark transition-colors inline-block"
-                                    >
-                                        Book Your First Appointment
-                                    </Link>
-                                </div>
-                            ) : (
-                                <div className="space-y-3">
-                                    {appointments.map((appointment, index) => (
-                                        <div key={index} className="border-l-4 border-Primary pl-4 py-2">
-                                            <p className="font-medium text-gray-900">
-                                                {appointment.appointmentType || 'General Consultation'}
-                                            </p>
-                                            <p className="text-sm text-gray-600">
-                                                {new Date(appointment.appointmentDate).toLocaleDateString()}
-                                            </p>
-                                            <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${appointment.status === 'Confirmed' ? 'bg-green-100 text-green-800' :
-                                                    appointment.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                        'bg-gray-100 text-gray-800'
-                                                }`}>
-                                                {appointment.status || 'Pending'}
-                                            </span>
-                                        </div>
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Appointments</h3>
+                            {appointments.length > 0 ? (
+                                <ul className="space-y-4">
+                                    {appointments.map((apt) => (
+                                        <li key={apt.id} className="border-b pb-4 last:border-b-0 last:pb-0">
+                                            <p className="text-gray-800 font-medium">{apt.doctorName}</p>
+                                            <p className="text-gray-600 text-sm">{new Date(apt.appointmentDate).toLocaleDateString()} at {new Date(apt.appointmentDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                            <p className="text-gray-600 text-sm">{apt.specialty}</p>
+                                        </li>
                                     ))}
-                                </div>
+                                </ul>
+                            ) : (
+                                <p className="text-gray-600">No recent appointments.</p>
                             )}
+                            <Link
+                                to="/appointments"
+                                className="mt-6 block text-center px-4 py-2 bg-gray-100 text-Primary rounded-lg hover:bg-gray-200 transition-colors"
+                            >
+                                View All Appointments
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -373,4 +357,5 @@ const PatientProfile = () => {
 };
 
 export default PatientProfile;
+
 
