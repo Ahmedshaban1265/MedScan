@@ -44,6 +44,7 @@ const Login = () => {
             if (response.ok && responseData.success) {
                 setMessage('Login successful!')
                 setMessageType('success')
+                localStorage.setItem('token', responseData.data);
 
                 // Handle successful login
                 login(responseData.data?.userName || responseData.data?.email || email)
