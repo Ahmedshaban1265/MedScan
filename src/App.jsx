@@ -11,6 +11,7 @@ import SignUp from "./Pages/SignUp"
 import ResetPassword from "./Pages/ResetPassword"
 import Scan from "./Pages/Scan"
 import ScanResult from "./Pages/ScanResult"
+import Booking from "./Pages/Booking"
 import { AuthProvider } from "./Auth/AuthProvider"
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/booking" element={<PrivateRoute><Booking /></PrivateRoute>} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/login" element={<Login />} />
