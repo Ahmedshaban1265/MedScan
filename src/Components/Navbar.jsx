@@ -20,8 +20,10 @@ const Navbar = () => {
   const storedUserData = localStorage.getItem('user')
   const storedFirstName = localStorage.getItem('firstName')
   const storedLastName = localStorage.getItem('lastName')
+  const storedRole = localStorage.getItem('userRole') || localStorage.getItem('role')
   
   let displayedUsername = null;
+  let userRole = null;
   
   // First try to get username from user object
   if (user?.userName) {
@@ -60,6 +62,13 @@ const Navbar = () => {
     }
   }
 
+  // Get user role
+  if (user?.role !== undefined) {
+    userRole = user.role;
+  } else if (storedRole) {
+    userRole = storedRole;
+  }
+
   // Clean the displayed username from quotes and check if it's an email
   if (displayedUsername) {
     displayedUsername = displayedUsername.replace(/['"]/g, '');
@@ -68,6 +77,15 @@ const Navbar = () => {
       displayedUsername = displayedUsername.split('@')[0];
     }
   }
+
+  // Determine profile link based on user role
+  const getProfileLink = () => {
+    if (userRole === 'Doctor') { // Doctor
+      return '/doctor-dashboard';
+    } else { // Patient or default
+      return '/patient-profile';
+    }
+  };
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const handlelogout = () => {
@@ -191,10 +209,23 @@ const Navbar = () => {
                 {
                   isDropdownOpen &&
                   <div className='z-30 absolute top-[66px] bg-white w-full cursor-pointer  border-2  text-center'>
-
-                    <button onClick={handlelogout} className='   text-black-medium font-semibold py-2  text-[15px] '>Logout</button>
-
-
+                    <Link 
+                      to={getProfileLink()} 
+                      className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      {userRole === 1 ? 'Dashboard' : 'Profile'}
+                    </Link>
+                    {userRole === 1 && (
+                      <Link 
+                        to="/doctor-profile" 
+                        className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        Profile
+                      </Link>
+                    )}
+                    <button onClick={handlelogout} className='w-full text-black-medium font-semibold py-2  text-[15px] hover:bg-gray-100'>Logout</button>
                   </div>
                 }
               </div>
@@ -248,10 +279,23 @@ const Navbar = () => {
                 {
                   isDropdownOpen &&
                   <div className='z-30 absolute top-[66px] bg-white w-full cursor-pointer  border-2  text-center'>
-
-                    <button onClick={handlelogout} className='   text-black-medium font-semibold py-2  text-[15px] '>Logout</button>
-
-
+                    <Link 
+                      to={getProfileLink()} 
+                      className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      {userRole === 1 ? 'Dashboard' : 'Profile'}
+                    </Link>
+                    {userRole === 1 && (
+                      <Link 
+                        to="/doctor-profile" 
+                        className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        Profile
+                      </Link>
+                    )}
+                    <button onClick={handlelogout} className='w-full text-black-medium font-semibold py-2  text-[15px] hover:bg-gray-100'>Logout</button>
                   </div>
                 }
               </div>

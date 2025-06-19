@@ -24,14 +24,15 @@ const SignUp = () => {
         phoneNumber: '1000000000',
         gender: '',
         dateOfBirth: '',
-        role: 'Patient',
+        role: 'Patient', // Default to Patient
         specialization: '',
         bio: '',
         profilePictureUrl: ''
     })
 
     const handleRegisterChange = (e) => {
-        setRegisterData({ ...registerData, [e.target.name]: e.target.value })
+        const { name, value } = e.target;
+        setRegisterData({ ...registerData, [name]: value });
     }
 
     const handleSubmit = async (e) => {
@@ -55,21 +56,32 @@ const SignUp = () => {
             return
         }
 
-        // Prepare data for API (only required fields)
+        // Validate doctor-specific fields
+        if (registerData.role === 'Doctor') {
+            if (!registerData.specialization.trim()) {
+                setMessage('Specialization is required for doctors')
+                setMessageType('failed')
+                setIsLoading(false);
+                setTimeout(() => setMessage(''), 5000)
+                return
+            }
+        }
+
+        // Prepare data for API with PascalCase keys and without 'dto' wrapper
         const apiData = {
-            firstName: registerData.firstName,
-            lastName: registerData.lastName,
-            userName: registerData.userName,
-            email: registerData.email,
-            password: registerData.password,
-            confirmPassword: registerData.confirmPassword,
-            phoneNumber: registerData.phoneNumber || '',
-            gender: registerData.gender || '',
-            dateOfBirth: registerData.dateOfBirth || new Date().toISOString(),
-            role: registerData.role || 'Patient',
-            specialization: registerData.specialization || '',
-            bio: registerData.bio || '',
-            profilePictureUrl: registerData.profilePictureUrl || ''
+            FirstName: registerData.firstName,
+            LastName: registerData.lastName,
+            UserName: registerData.userName,
+            Email: registerData.email,
+            Password: registerData.password,
+            ConfirmPassword: registerData.confirmPassword,
+            PhoneNumber: registerData.phoneNumber || '',
+            Gender: registerData.gender || '',
+            DateOfBirth: registerData.dateOfBirth || new Date().toISOString(),
+            Role: registerData.role,
+            Specialization: registerData.specialization || '',
+            Bio: registerData.bio || '',
+            ProfilePictureUrl: registerData.profilePictureUrl || ''
         }
 
         console.log('Sending registration data:', apiData);
@@ -82,7 +94,7 @@ const SignUp = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(apiData),
+                body: JSON.stringify(apiData), // Removed 'dto' wrapper
             })
 
             const responseData = await response.json()
@@ -128,7 +140,7 @@ const SignUp = () => {
             phoneNumber: '',
             gender: '',
             dateOfBirth: '',
-            role: '',
+            role: 'Patient',
             specialization: '',
             bio: '',
             profilePictureUrl: ''
@@ -149,6 +161,21 @@ const SignUp = () => {
                 </div>
                 <form onSubmit={handleSubmit} className='bg-white w-full lg:w-1/2 h-full lg:w-1/2 overflow-y-auto  rounded-e-3xl px-8 py-5'>
                     <h2 className='text-center font-semibold text-2xl py-3'>Create your account!</h2>
+                    
+                    {/* Account Type Selection - Dropdown */}
+                    <div className='py-2'>
+                        <label className='block mb-2 text-[14px] font-semibold'>Account Type</label>
+                        <select 
+                            name="role" 
+                            value={registerData.role}
+                            onChange={handleRegisterChange}
+                            disabled={isLoading}
+                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 text-sm disabled:opacity-50'
+                        >
+                            <option value="Patient">Patient</option>
+                            <option value="Doctor">Doctor</option>
+                        </select>
+                    </div>
                     
                     <div className='flex gap-3 py-1'>
                         <div className=''>
@@ -191,7 +218,8 @@ const SignUp = () => {
                     </div>
 
                     <div className='py-1'>
-                        <label className='block  mb-2 text-[14px]'>Email</label>
+                        <label className='block  mb-2 text-[14px]
+'>Email</label>
                         <input 
                             onChange={handleRegisterChange} 
                             name='email' 
@@ -199,6 +227,78 @@ const SignUp = () => {
                             placeholder='Email' 
                             type="email"
                             required
+                            disabled={isLoading}
+                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
+                        />
+                    </div>
+
+                    {/* Doctor-specific fields */}
+                    {registerData.role === 'Doctor' && (
+                        <>
+                            <div className='py-1'>
+                                <label className='block mb-2 text-[14px]'>Specialization *</label>
+                                <input 
+                                    onChange={handleRegisterChange} 
+                                    name='specialization' 
+                                    value={registerData.specialization} 
+                                    placeholder='e.g., Cardiology, Radiology, Internal Medicine' 
+                                    required
+                                    disabled={isLoading}
+                                    className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
+                                />
+                            </div>
+                            <div className='py-1'>
+                                <label className='block mb-2 text-[14px]'>Bio (Optional)</label>
+                                <textarea 
+                                    onChange={handleRegisterChange} 
+                                    name='bio' 
+                                    value={registerData.bio} 
+                                    placeholder='Brief description about your experience and approach...' 
+                                    rows={3}
+                                    disabled={isLoading}
+                                    className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50 resize-none' 
+                                />
+                            </div>
+                        </>
+                    )}
+
+                    <div className='flex gap-3 py-1'>
+                        <div className='w-1/2'>
+                            <label className='block mb-2 text-[14px]'>Gender (Optional)</label>
+                            <select 
+                                onChange={handleRegisterChange} 
+                                name='gender' 
+                                value={registerData.gender} 
+                                disabled={isLoading}
+                                className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 text-sm disabled:opacity-50'
+                            >
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div className='w-1/2'>
+                            <label className='block mb-2 text-[14px]'>Date of Birth (Optional)</label>
+                            <input 
+                                onChange={handleRegisterChange} 
+                                name='dateOfBirth' 
+                                value={registerData.dateOfBirth} 
+                                type="date"
+                                disabled={isLoading}
+                                className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 text-sm disabled:opacity-50' 
+                            />
+                        </div>
+                    </div>
+
+                    <div className='py-1'>
+                        <label className='block mb-2 text-[14px]'>Phone Number (Optional)</label>
+                        <input 
+                            onChange={handleRegisterChange} 
+                            name='phoneNumber' 
+                            value={registerData.phoneNumber} 
+                            placeholder='Phone Number' 
+                            type="tel"
                             disabled={isLoading}
                             className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
                         />
@@ -232,26 +332,13 @@ const SignUp = () => {
                         />
                     </div>
 
-                    {/* <div className='py-2'>
-                        <label className='block  mb-2 text-[14px]'>Phone Number (Optional)</label>
-                        <input 
-                            onChange={handleRegisterChange} 
-                            name='phoneNumber' 
-                            value={registerData.phoneNumber} 
-                            placeholder='Phone Number' 
-                            type="tel"
-                            disabled={isLoading}
-                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
-                        />
-                    </div> */}
-
                     <div className='flex justify-center items-center my-1 '>
                         <button 
                             className='bg-Primary w-full py-1 rounded-lg text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed' 
                             type='submit'
                             disabled={isLoading}
                         >
-                            {isLoading ? 'Creating Account...' : 'Create Account'}
+                            {isLoading ? 'Creating Account...' : `Create ${registerData.role} Account`}
                         </button>
                     </div>
                     
