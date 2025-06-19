@@ -1,46 +1,49 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
     const [auth, setAuth] = useState(false);
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('userName'); // Changed 'userName' to 'user'
-        if (storedUser) {
-            try {
-                setUser(JSON.parse(storedUser));
-                setAuth(true); //If a user exists, then make authorized to True
-            } catch (error) {
-                console.error("Error parsing user data from localStorage:", error);
-                localStorage.removeItem('userName');
-                setUser(null);
-                setAuth(false);
-            }
+        // Check for stored authentication state on component mount
+        const storedAuth = localStorage.getItem("auth");
+        const storedUser = localStorage.getItem("userName");
+        const storedRole = localStorage.getItem("userRole");
+
+        if (storedAuth === "true" && storedUser) {
+            setAuth(true);
+            setUser({ ...JSON.parse(storedUser), role: storedRole });
         }
     }, []);
 
-    const login = (userData) => {
-        setUser(userData);
+    const login = (userData, userRole) => {
+        setUser({ ...userData, role: userRole });
         setAuth(true); //Setting True here
-        localStorage.setItem('userName',JSON.stringify(userData)); //Save in localStorage
-    }
+        localStorage.setItem("userName", JSON.stringify(userData)); //Save in localStorage
+        localStorage.setItem("auth", "true"); // Save auth state
+        localStorage.setItem("userRole", userRole); // Save userRole
+    };
 
     const logOut = () => {
-        console.log("Logging out, removing user from localStorage");
-        localStorage.removeItem('userName'); //Use the same KEY from the local storage
         setUser(null);
         setAuth(false);
-    }
+        localStorage.removeItem("userName");
+        localStorage.removeItem("auth");
+        localStorage.removeItem("token"); // Also remove token on logout
+        localStorage.removeItem("userRole"); // Also remove userRole on logout
+    };
 
     return (
-        <AuthContext.Provider value={{ user, login, logOut, auth ,setAuth }}>
+        <AuthContext.Provider value={{ auth, user, login, logOut, setAuth }}>
             {children}
         </AuthContext.Provider>
-    )
-}
+    );
+};
 
 export const useAuth = () => {
-    return useContext(AuthContext)
-}
+    return useContext(AuthContext);
+};
+
+

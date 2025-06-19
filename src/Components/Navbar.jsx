@@ -20,7 +20,7 @@ const Navbar = () => {
   const storedUserData = localStorage.getItem('user')
   const storedFirstName = localStorage.getItem('firstName')
   const storedLastName = localStorage.getItem('lastName')
-  const storedRole = localStorage.getItem('userRole') || localStorage.getItem('role')
+  const storedRole = localStorage.getItem("userRole")
   
   let displayedUsername = null;
   let userRole = null;
@@ -41,7 +41,7 @@ const Navbar = () => {
   else if (user?.firstName) {
     displayedUsername = user.firstName;
   }
-  // Try to get from localStorage firstName
+  // Then try to get from localStorage firstName
   else if (storedFirstName) {
     displayedUsername = storedFirstName;
   }
@@ -69,6 +69,11 @@ const Navbar = () => {
     userRole = storedRole;
   }
 
+  // Convert userRole to integer if it's a string
+  if (typeof userRole === 'string') {
+    userRole = parseInt(userRole, 10);
+  }
+
   // Clean the displayed username from quotes and check if it's an email
   if (displayedUsername) {
     displayedUsername = displayedUsername.replace(/['"]/g, '');
@@ -80,9 +85,10 @@ const Navbar = () => {
 
   // Determine profile link based on user role
   const getProfileLink = () => {
-    if (userRole === 'Doctor') { // Doctor
+    // Assuming role 1 is Doctor, and other roles (or no role) are Patient
+    if (userRole === "Doctor") { 
       return '/doctor-dashboard';
-    } else { // Patient or default
+    } else { 
       return '/patient-profile';
     }
   };
@@ -214,9 +220,9 @@ const Navbar = () => {
                       className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
                       onClick={() => setIsDropdownOpen(false)}
                     >
-                      {userRole === 1 ? 'Dashboard' : 'Profile'}
+                      {userRole === "Doctor" ? 'Dashboard' : 'Profile'}
                     </Link>
-                    {userRole === 1 && (
+                    {userRole === "Doctor"&& (
                       <Link 
                         to="/doctor-profile" 
                         className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
@@ -284,9 +290,9 @@ const Navbar = () => {
                       className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
                       onClick={() => setIsDropdownOpen(false)}
                     >
-                      {userRole === 1 ? 'Dashboard' : 'Profile'}
+                      {userRole === "Doctor" ? 'Dashboard' : 'Profile'}
                     </Link>
-                    {userRole === 1 && (
+                    {userRole === "Doctor" && (
                       <Link 
                         to="/doctor-profile" 
                         className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
@@ -340,4 +346,5 @@ const Navbar = () => {
 }
 
 export default Navbar
+
 
