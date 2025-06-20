@@ -156,6 +156,7 @@ const Navbar = () => {
                 <img width={71} height={36} src={logo} />
               </Link>
             </div>
+            
 
             <div className='relative'>
               {
@@ -270,6 +271,9 @@ const Navbar = () => {
           </div>
         )
       }
+      {showmenuIcon && <div className="h-16"></div>}
+
+
 
       {/* SideBar */}
       <div ref={sidebarRef}>
