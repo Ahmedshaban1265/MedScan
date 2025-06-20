@@ -15,6 +15,7 @@ import Booking from "./Pages/Booking"
 import PatientProfile from "./Pages/PatientProfile"
 import DoctorProfile from "./Pages/DoctorProfile"
 import AllAppointments from "./Pages/AllAppointments"
+import Patients from "./Pages/Patients"
 import DoctorDashboard from "./Pages/DoctorDashboard"
 import { AuthProvider } from "./Auth/AuthProvider"
 
@@ -37,7 +38,8 @@ function App() {
           <Route path="/patient-profile" element={ <PrivateRoute> <PatientProfile /> </PrivateRoute>} />
           <Route path="/doctor-profile" element={ <PrivateRoute> <DoctorProfile /> </PrivateRoute>} />
           <Route path="/doctor-dashboard" element={<PrivateRoute> <DoctorDashboard /> </PrivateRoute>} />
-          <Route path="/all-appointments" element={ <PrivateRoute> <AllAppointments /> </PrivateRoute>} />
+          <Route path="/all-appointments" element={<PrivateRoute> <AllAppointments /> </PrivateRoute>} />
+          <Route path="/patients" element={<PrivateRoute><Patients /></PrivateRoute>} />
         </Routes>
         <Footer />
       </AuthProvider>

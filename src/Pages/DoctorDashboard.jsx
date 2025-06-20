@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../Auth/AuthProvider';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 const DoctorDashboard = () => {
@@ -19,6 +18,8 @@ const DoctorDashboard = () => {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [showAddAppointmentModal, setShowAddAppointmentModal] = useState(false);
+    const [showScheduleModal, setShowScheduleModal] = useState(false);
 
     // Get user name for welcome message
     const getDoctorName = () => {
@@ -183,6 +184,343 @@ const DoctorDashboard = () => {
                 buttonElement.textContent = statusText;
             }
         }
+    };
+
+    // Quick Actions Functions
+    const handleAddNewAppointment = () => {
+        setShowAddAppointmentModal(true);
+    };
+
+    const handleViewPatients = () => {
+        navigate('/patients');
+    };
+
+    const handleManageSchedule = () => {
+        setShowScheduleModal(true);
+    };
+
+    // Add New Appointment Modal Component
+    const AddAppointmentModal = () => {
+        const [appointmentData, setAppointmentData] = useState({
+            patientEmail: '',
+            appointmentDate: '',
+            appointmentTime: '',
+            appointmentType: 'Routine Checkup',
+            notes: ''
+        });
+        const [isSubmitting, setIsSubmitting] = useState(false);
+
+        const handleSubmit = async (e) => {
+            e.preventDefault();
+            setIsSubmitting(true);
+
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    alert('Authentication token not found. Please login again.');
+                    return;
+                }
+
+                // Combine date and time
+                const appointmentDateTime = new Date(`${appointmentData.appointmentDate}T${appointmentData.appointmentTime}`);
+
+                const response = await fetch('https://medscanapi.runasp.net/api/Appointment', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        patientEmail: appointmentData.patientEmail,
+                        appointmentDate: appointmentDateTime.toISOString(),
+                        appointmentType: appointmentData.appointmentType,
+                        notes: appointmentData.notes
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Appointment created successfully!');
+                    setShowAddAppointmentModal(false);
+                    setAppointmentData({
+                        patientEmail: '',
+                        appointmentDate: '',
+                        appointmentTime: '',
+                        appointmentType: 'Routine Checkup',
+                        notes: ''
+                    });
+                    fetchDashboardData(); // Refresh data
+                } else {
+                    const errorText = await response.text();
+                    alert(`Failed to create appointment: ${errorText}`);
+                }
+            } catch (err) {
+                console.error('Error creating appointment:', err);
+                alert('Network error. Please check your connection and try again.');
+            } finally {
+                setIsSubmitting(false);
+            }
+        };
+
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-semibold">Add New Appointment</h3>
+                        <button
+                            onClick={() => setShowAddAppointmentModal(false)}
+                            className="text-gray-500 hover:text-gray-700"
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Patient Email
+                            </label>
+                            <input
+                                type="email"
+                                required
+                                value={appointmentData.patientEmail}
+                                onChange={(e) => setAppointmentData({...appointmentData, patientEmail: e.target.value})}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-Primary"
+                                placeholder="patient@example.com"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Date
+                            </label>
+                            <input
+                                type="date"
+                                required
+                                value={appointmentData.appointmentDate}
+                                onChange={(e) => setAppointmentData({...appointmentData, appointmentDate: e.target.value})}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-Primary"
+                                min={new Date().toISOString().split('T')[0]}
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Time
+                            </label>
+                            <input
+                                type="time"
+                                required
+                                value={appointmentData.appointmentTime}
+                                onChange={(e) => setAppointmentData({...appointmentData, appointmentTime: e.target.value})}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-Primary"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Appointment Type
+                            </label>
+                            <select
+                                value={appointmentData.appointmentType}
+                                onChange={(e) => setAppointmentData({...appointmentData, appointmentType: e.target.value})}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-Primary"
+                            >
+                                <option value="Routine Checkup">Routine Checkup</option>
+                                <option value="Follow-up">Follow-up</option>
+                                <option value="Consultation">Consultation</option>
+                                <option value="Emergency">Emergency</option>
+                                <option value="Scan Review">Scan Review</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Notes (Optional)
+                            </label>
+                            <textarea
+                                value={appointmentData.notes}
+                                onChange={(e) => setAppointmentData({...appointmentData, notes: e.target.value})}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-Primary"
+                                rows="3"
+                                placeholder="Additional notes..."
+                            />
+                        </div>
+
+                        <div className="flex gap-3 pt-4">
+                            <button
+                                type="button"
+                                onClick={() => setShowAddAppointmentModal(false)}
+                                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="flex-1 px-4 py-2 bg-Primary text-white rounded-md hover:bg-Primary-dark transition-colors disabled:opacity-50"
+                            >
+                                {isSubmitting ? 'Creating...' : 'Create Appointment'}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        );
+    };
+
+    // Schedule Management Modal Component
+    const ScheduleModal = () => {
+        const [scheduleData, setScheduleData] = useState({
+            workingDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+            startTime: '09:00',
+            endTime: '17:00',
+            breakStart: '12:00',
+            breakEnd: '13:00',
+            appointmentDuration: 30
+        });
+
+        const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+        const handleDayToggle = (day) => {
+            setScheduleData(prev => ({
+                ...prev,
+                workingDays: prev.workingDays.includes(day)
+                    ? prev.workingDays.filter(d => d !== day)
+                    : [...prev.workingDays, day]
+            }));
+        };
+
+        const handleSaveSchedule = () => {
+            // Here you would typically save to API
+            alert('Schedule settings saved successfully!');
+            setShowScheduleModal(false);
+        };
+
+        return (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-6 w-full max-w-lg mx-4">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-semibold">Manage Schedule</h3>
+                        <button
+                            onClick={() => setShowScheduleModal(false)}
+                            className="text-gray-500 hover:text-gray-700"
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div className="space-y-6">
+                        {/* Working Days */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Working Days
+                            </label>
+                            <div className="grid grid-cols-2 gap-2">
+                                {daysOfWeek.map(day => (
+                                    <label key={day} className="flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            checked={scheduleData.workingDays.includes(day)}
+                                            onChange={() => handleDayToggle(day)}
+                                            className="mr-2"
+                                        />
+                                        <span className="text-sm">{day}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Working Hours */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Start Time
+                                </label>
+                                <input
+                                    type="time"
+                                    value={scheduleData.startTime}
+                                    onChange={(e) => setScheduleData({...scheduleData, startTime: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-Primary"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    End Time
+                                </label>
+                                <input
+                                    type="time"
+                                    value={scheduleData.endTime}
+                                    onChange={(e) => setScheduleData({...scheduleData, endTime: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-Primary"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Break Time */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Break Start
+                                </label>
+                                <input
+                                    type="time"
+                                    value={scheduleData.breakStart}
+                                    onChange={(e) => setScheduleData({...scheduleData, breakStart: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-Primary"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Break End
+                                </label>
+                                <input
+                                    type="time"
+                                    value={scheduleData.breakEnd}
+                                    onChange={(e) => setScheduleData({...scheduleData, breakEnd: e.target.value})}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-Primary"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Appointment Duration */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Appointment Duration (minutes)
+                            </label>
+                            <select
+                                value={scheduleData.appointmentDuration}
+                                onChange={(e) => setScheduleData({...scheduleData, appointmentDuration: parseInt(e.target.value)})}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-Primary"
+                            >
+                                <option value={15}>15 minutes</option>
+                                <option value={30}>30 minutes</option>
+                                <option value={45}>45 minutes</option>
+                                <option value={60}>60 minutes</option>
+                            </select>
+                        </div>
+
+                        <div className="flex gap-3 pt-4">
+                            <button
+                                onClick={() => setShowScheduleModal(false)}
+                                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSaveSchedule}
+                                className="flex-1 px-4 py-2 bg-Primary text-white rounded-md hover:bg-Primary-dark transition-colors"
+                            >
+                                Save Schedule
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     };
 
 
@@ -412,21 +750,30 @@ const DoctorDashboard = () => {
                 <div className="mt-8 bg-white rounded-lg shadow-sm p-6">
                     <h2 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <button className="p-4 bg-Primary text-white rounded-lg hover:bg-Primary-dark transition-colors text-center">
+                        <button 
+                            onClick={handleAddNewAppointment}
+                            className="p-4 bg-Primary text-white rounded-lg hover:bg-Primary-dark transition-colors text-center"
+                        >
                             <svg className="w-6 h-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                             </svg>
                             Add New Appointment
                         </button>
 
-                        <button className="p-4 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-center">
+                        <button 
+                            onClick={handleViewPatients}
+                            className="p-4 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-center"
+                        >
                             <svg className="w-6 h-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
                             View Patients
                         </button>
 
-                        <button className="p-4 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-center">
+                        <button 
+                            onClick={handleManageSchedule}
+                            className="p-4 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-center"
+                        >
                             <svg className="w-6 h-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
@@ -444,6 +791,10 @@ const DoctorDashboard = () => {
                         </Link>
                     </div>
                 </div>
+
+                {/* Modals */}
+                {showAddAppointmentModal && <AddAppointmentModal />}
+                {showScheduleModal && <ScheduleModal />}
             </div>
         </div>
     );
