@@ -8,144 +8,113 @@ import RegistrationBtns from './RegistrationBtns'
 import { useAuth } from '../Auth/AuthProvider'
 
 const Navbar = () => {
-
   const { user, logOut } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
-  console.log('User object:', user)
-  
-  // Try to get username from different possible sources
   const storedUsername = localStorage.getItem('userName')
   const storedUserData = localStorage.getItem('user')
   const storedFirstName = localStorage.getItem('firstName')
   const storedLastName = localStorage.getItem('lastName')
   const storedRole = localStorage.getItem("userRole")
-  
-  let displayedUsername = null;
-  let userRole = null;
-  
-  // First try to get username from user object
+
+  let displayedUsername = null
+  let userRole = null
+
   if (user?.userName) {
-    displayedUsername = user.userName;
-  } 
-  // Then try to get from user.username
-  else if (user?.username) {
-    displayedUsername = user.username;
-  }
-  // Then try to get from user.name
-  else if (user?.name) {
-    displayedUsername = user.name;
-  }
-  // Try to get from user.firstName
-  else if (user?.firstName) {
-    displayedUsername = user.firstName;
-  }
-  // Then try to get from localStorage firstName
-  else if (storedFirstName) {
-    displayedUsername = storedFirstName;
-  }
-  // Then try to get from localStorage userName
-  else if (storedUsername) {
-    displayedUsername = storedUsername;
-  }
-  // Finally try to parse user data from localStorage
-  else if (storedUserData) {
+    displayedUsername = user.userName
+  } else if (user?.username) {
+    displayedUsername = user.username
+  } else if (user?.name) {
+    displayedUsername = user.name
+  } else if (user?.firstName) {
+    displayedUsername = user.firstName
+  } else if (storedFirstName) {
+    displayedUsername = storedFirstName
+  } else if (storedUsername) {
+    displayedUsername = storedUsername
+  } else if (storedUserData) {
     try {
-      const userData = JSON.parse(storedUserData);
-      displayedUsername = userData.userName || userData.username || userData.name || userData.firstName;
+      const userData = JSON.parse(storedUserData)
+      displayedUsername = userData.userName || userData.username || userData.name || userData.firstName
     } catch (e) {
-      // If it's not JSON, check if it's a plain string that's not an email
       if (storedUserData && !storedUserData.includes('@')) {
-        displayedUsername = storedUserData;
+        displayedUsername = storedUserData
       }
     }
   }
 
-  // Get user role
   if (user?.role !== undefined) {
-    userRole = user.role;
+    userRole = user.role
   } else if (storedRole) {
-    userRole = storedRole;
+    userRole = storedRole
   }
 
-  // Convert userRole to integer if it's a string
-  if (typeof userRole === 'string') {
-    userRole = parseInt(userRole, 10);
-  }
-
-  // Clean the displayed username from quotes and check if it's an email
   if (displayedUsername) {
-    displayedUsername = displayedUsername.replace(/['"]/g, '');
-    // If it looks like an email, try to extract the username part before @
+    displayedUsername = displayedUsername.replace(/['"]/g, '')
     if (displayedUsername.includes('@')) {
-      displayedUsername = displayedUsername.split('@')[0];
+      displayedUsername = displayedUsername.split('@')[0]
     }
   }
 
-  // Determine profile link based on user role
   const getProfileLink = () => {
-    // Assuming role 1 is Doctor, and other roles (or no role) are Patient
-    if (userRole === "Doctor") { 
-      return '/doctor-dashboard';
-    } else { 
-      return '/patient-profile';
+    if (userRole === "Doctor") {
+      return '/doctor-dashboard'
+    } else if (userRole === "Patient") {
+      return '/patient-profile'
+    } else {
+      return '/patient-profile'
     }
-  };
+  }
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const handlelogout = () => {
     setIsDropdownOpen(false)
     logOut()
-       navigate('/')
-    }
+    navigate('/')
+  }
 
   const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen); // Toggle the dropdown open/closed
-  };
+    setIsDropdownOpen(!isDropdownOpen)
+  }
 
-  // Function to render conditional registration buttons with smooth transition
   const renderRegistrationButtons = (gap, className) => {
-    const currentPath = location.pathname;
-    
+    const currentPath = location.pathname
+
     if (currentPath === '/signup' || currentPath === '/signUp') {
-      // Show only Login button on signup page
       return (
         <div className={`flex ${gap} transition-all duration-300 ease-in-out`}>
-          <Link 
-            to="/login" 
+          <Link
+            to="/login"
             className={`${className} border-2 border-Primary text-Primary rounded-lg hover:bg-Primary hover:text-white transition-all duration-200`}
           >
             Log in
           </Link>
         </div>
-      );
+      )
     } else if (currentPath === '/login') {
-      // Show only Sign UP button on login page
       return (
         <div className={`flex ${gap} transition-all duration-300 ease-in-out`}>
-          <Link 
-            to="/signup" 
+          <Link
+            to="/signup"
             className={`${className} bg-Primary text-white rounded-lg hover:bg-Primary-dark transition-all duration-200`}
           >
             Sign UP
           </Link>
         </div>
-      );
+      )
     } else {
-      // Show both buttons on other pages (default behavior)
       return (
         <div className="transition-all duration-300 ease-in-out">
           <RegistrationBtns gap={gap} className={className} />
         </div>
-      );
+      )
     }
-  };
+  }
 
   const [toggle, setToggle] = useState(false)
-  const [showmenuIcon, setshowmenuIcon] = useState(false) // Initial check for screen size
+  const [showmenuIcon, setshowmenuIcon] = useState(false)
   const sidebarRef = useRef(null)
-
 
   const handleClickOutside = (event) => {
     if (toggle && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
@@ -157,14 +126,13 @@ const Navbar = () => {
     const handleSize = () => {
       if (window.innerWidth <= 1024) {
         setshowmenuIcon(true)
-
       } else {
         setshowmenuIcon(false)
         setToggle(false)
-
       }
     }
-    handleSize() // Initial check
+
+    handleSize()
     window.addEventListener('resize', handleSize)
     document.addEventListener('mousedown', handleClickOutside)
 
@@ -174,12 +142,9 @@ const Navbar = () => {
     }
   }, [toggle, showmenuIcon])
 
-
   return (
     <section className='' >
       {
-
-        // small screen
         showmenuIcon ? (
           <div className=' fixed top-0 w-full z-20 bg-white py-4 px-3 flex justify-between items-center shadow-lg  border-b-[3px] border-opacity-20 border-Secondary-darkGray'>
             <div className='flex items-center gap-2'>
@@ -189,13 +154,13 @@ const Navbar = () => {
               </Link>
             </div>
 
-
             <div className='relative'>
               {
                 user ? (
-
-                  <button onClick={toggleDropdown} className=' cursor-pointer flex items-center gap-2    px-4 py-2'>
-                    <svg className='fill-Primary mb-2' width={20} height={20} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M182.6 470.6c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8l256 0c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128z" /></svg>
+                  <button onClick={toggleDropdown} className=' cursor-pointer flex items-center gap-2 px-4 py-2'>
+                    <svg className='fill-Primary mb-2' width={20} height={20} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                      <path d="M182.6 470.6c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8l256 0c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128z" />
+                    </svg>
                     <p className='text-[14px] font-semibold capitalize'>
                       {displayedUsername || 'User'}
                     </p>
@@ -203,9 +168,6 @@ const Navbar = () => {
                       {(displayedUsername || 'U').charAt(0).toUpperCase()}
                     </p>
                   </button>
-
-
-
                 ) : (
                   renderRegistrationButtons('gap-1', 'px-3 py-1 text-[12px] font-[500]')
                 )
@@ -214,44 +176,40 @@ const Navbar = () => {
               <div>
                 {
                   isDropdownOpen &&
-                  <div className='z-30 absolute top-[66px] bg-white w-full cursor-pointer  border-2  text-center'>
-                    <Link 
-                      to={getProfileLink()} 
+                  <div className='z-30 absolute top-[66px] bg-white w-full cursor-pointer border-2 text-center'>
+                    <Link
+                      to={getProfileLink()}
                       className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
                       onClick={() => setIsDropdownOpen(false)}
                     >
                       {userRole === "Doctor" ? 'Dashboard' : 'Profile'}
                     </Link>
-                    {userRole === "Doctor"&& (
-                      <Link 
-                        to="/doctor-profile" 
+                    {userRole === "Doctor" && (
+                      <Link
+                        to="/doctor-profile"
                         className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
                         onClick={() => setIsDropdownOpen(false)}
                       >
                         Profile
                       </Link>
                     )}
-                    <button onClick={handlelogout} className='w-full text-black-medium font-semibold py-2  text-[15px] hover:bg-gray-100'>Logout</button>
+                    <button onClick={handlelogout} className='w-full text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'>
+                      Logout
+                    </button>
                   </div>
                 }
               </div>
-
             </div>
-
           </div>
-
-
-          // large screen
         ) : (
-
-          <div className=' bg-white px-20 py-2 flex  items-center justify-between border-b-[3px] border-opacity-20 border-Secondary-darkGray '>
+          <div className=' bg-white px-20 py-2 flex items-center justify-between border-b-[3px] border-opacity-20 border-Secondary-darkGray'>
             <Link to="/">
               <img src={logo} width={120} height={60} />
             </Link>
-            <div className='flex items-center gap-14' >
+            <div className='flex items-center gap-14'>
               {
                 NavbarData.map((item) => (
-                  <div className=''>
+                  <div key={item.name}>
                     <NavLink className={({ isActive }) =>
                       isActive ? 'text-Primary font-[600] text-lg' : ' text-Secondary-mediumGray text-lg hover:text-Primary hover:font-[500]'
                     } to={item.path}>{item.name}</NavLink>
@@ -263,9 +221,10 @@ const Navbar = () => {
             <div className='relative'>
               {
                 user ? (
-
-                  <button onClick={toggleDropdown} className=' cursor-pointer flex items-center gap-3    px-4 py-2'>
-                    <svg className='fill-Primary mb-2' width={25} height={25} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M182.6 470.6c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8l256 0c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128z" /></svg>
+                  <button onClick={toggleDropdown} className=' cursor-pointer flex items-center gap-3 px-4 py-2'>
+                    <svg className='fill-Primary mb-2' width={25} height={25} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                      <path d="M182.6 470.6c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8l256 0c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128z" />
+                    </svg>
                     <p className='text-[14px] font-semibold capitalize'>
                       {displayedUsername || 'User'}
                     </p>
@@ -273,9 +232,6 @@ const Navbar = () => {
                       {(displayedUsername || 'U').charAt(0).toUpperCase()}
                     </p>
                   </button>
-
-
-
                 ) : (
                   renderRegistrationButtons('gap-5', 'px-8 py-2 text-[17px] font-[600]')
                 )
@@ -284,67 +240,57 @@ const Navbar = () => {
               <div>
                 {
                   isDropdownOpen &&
-                  <div className='z-30 absolute top-[66px] bg-white w-full cursor-pointer  border-2  text-center'>
-                    <Link 
-                      to={getProfileLink()} 
+                  <div className='z-30 absolute top-[66px] bg-white w-full cursor-pointer border-2 text-center'>
+                    <Link
+                      to={getProfileLink()}
                       className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
                       onClick={() => setIsDropdownOpen(false)}
                     >
                       {userRole === "Doctor" ? 'Dashboard' : 'Profile'}
                     </Link>
                     {userRole === "Doctor" && (
-                      <Link 
-                        to="/doctor-profile" 
+                      <Link
+                        to="/doctor-profile"
                         className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
                         onClick={() => setIsDropdownOpen(false)}
                       >
                         Profile
                       </Link>
                     )}
-                    <button onClick={handlelogout} className='w-full text-black-medium font-semibold py-2  text-[15px] hover:bg-gray-100'>Logout</button>
+                    <button onClick={handlelogout} className='w-full text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'>
+                      Logout
+                    </button>
                   </div>
                 }
               </div>
-
             </div>
-
-
-
-
           </div>
         )
       }
-
-
 
       {/* SideBar */}
       <div ref={sidebarRef}>
         <div className={`sidebar ${toggle ? "open" : "close"} `}>
           <div className="p-10 pt-24">
-
             <ul>
               {NavbarData.map((item, index) => (
-                <div key={item.name} className="flex justify-center  mt-10">
-
+                <div key={item.name} className="flex justify-center mt-10">
                   <li className=' m-auto'>
-                    <NavLink className={({ isActive }) => isActive ? 'text-Primary text-lg font-bold' : ' text-Secondary-mediumGray  hover:text-Primary hover:font-bold text-lg'} to={item.path} onClick={() => setToggle(false)}>
+                    <NavLink className={({ isActive }) =>
+                      isActive ? 'text-Primary text-lg font-bold' : ' text-Secondary-mediumGray  hover:text-Primary hover:font-bold text-lg'
+                    } to={item.path} onClick={() => setToggle(false)}>
                       {item.name}
                     </NavLink>
                   </li>
                 </div>
               ))}
             </ul>
-
-
           </div>
-          {/* close */}
           <img onClick={() => setToggle(false)} className='m-auto cursor-pointer' src={close} />
         </div>
       </div>
-    </section >
+    </section>
   )
 }
 
 export default Navbar
-
-
