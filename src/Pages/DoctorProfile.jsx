@@ -145,6 +145,20 @@ const DoctorProfile = () => {
         }
     };
 
+    // Quick Actions Functions
+    const handleViewPatients = () => {
+        navigate('/patients');
+    };
+
+    const handleManageSchedule = () => {
+        // You can either navigate to a separate page or add a modal
+        // To navigate to a separate page:
+        navigate('/schedule-management');
+        
+        // Or if you want to add a modal like in Dashboard:
+        // setShowScheduleModal(true);
+    };
+
     useEffect(() => {
         fetchProfileData();
         fetchDoctorStats();
@@ -388,10 +402,16 @@ const DoctorProfile = () => {
                                 >
                                     View Dashboard
                                 </Link>
-                                <button className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                <button 
+                                    onClick={handleViewPatients}
+                                    className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                                >
                                     View Patients
                                 </button>
-                                <button className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                <button 
+                                    onClick={handleManageSchedule}
+                                    className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                                >
                                     Manage Schedule
                                 </button>
                             </div>
@@ -404,4 +424,5 @@ const DoctorProfile = () => {
 };
 
 export default DoctorProfile;
+
 
