@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../Auth/AuthProvider';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 
 const PatientProfile = () => {
+    const navigate = useNavigate();
+    const { logOut } = useAuth();
     const { user } = useAuth();
     const [profileData, setProfileData] = useState({
         firstName: '',
@@ -136,15 +140,12 @@ const PatientProfile = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-                    {/* تعديل هنا: اجعل المحتوى يتكدس عموديًا على الشاشات الصغيرة، وأفقيًا على الشاشات المتوسطة وما فوق */}
                     <div className="flex flex-col md:flex-row md:justify-between md:items-center">
-                        {/* قسم معلومات الملف الشخصي */}
                         <div className="mb-4 md:mb-0"> {/* إضافة هامش سفلي على الجوال، وإزالته على الشاشات الأكبر */}
                             <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
                             <p className="text-gray-600 mt-1">Manage your personal information and appointments</p>
                         </div>
-                        {/* قسم الأزرار */}
-                        {/* تعديل هنا: اجعل الأزرار تتكدس عموديًا على الشاشات الصغيرة، وأفقيًا على الشاشات الصغيرة وما فوق */}
+
                         <div className="flex flex-col sm:flex-row gap-4 mt-4 md:mt-0"> {/* إضافة هامش علوي على الجوال، وإزالته على الشاشات الأكبر */}
                             <Link
                                 to="/"
@@ -159,11 +160,15 @@ const PatientProfile = () => {
                                 Book Appointment
                             </Link>
                             <button
-                                onClick={() => window.location.href = '/logout'}
+                                onClick={() => {
+                                    logOut();
+                                    navigate('/');
+                                }}
                                 className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
                             >
                                 Logout
                             </button>
+
                         </div>
                     </div>
                 </div>

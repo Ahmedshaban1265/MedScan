@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../Auth/AuthProvider';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 
 const DoctorProfile = () => {
+    const navigate = useNavigate();
+    const { logOut } = useAuth();
     const { user } = useAuth();
     const [profileData, setProfileData] = useState({
         firstName: '',
@@ -172,8 +176,11 @@ const DoctorProfile = () => {
                                 Back to Dashboard
                             </Link>
                             <button
-                                onClick={() => window.location.href = '/logout'}
-                                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                                onClick={() => {
+                                    logOut();
+                                    navigate('/');
+                                }}
+                                className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
                             >
                                 Logout
                             </button>
