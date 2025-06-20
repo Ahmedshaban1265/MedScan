@@ -42,7 +42,7 @@ const Scan = () => {
 
         try {
 
-            const apiResponse = await fetch("https://5000-iapst6l0no28alu0u25js-b78f53d0.manus.computer/scan", {
+            const apiResponse = await fetch("https://ahmadshaban-medscan.hf.space/scan", {
                 method: "POST",
                 body: formData,
             });
