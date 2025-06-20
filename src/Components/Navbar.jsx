@@ -3,7 +3,7 @@ import logo from '../assets/logo.png'
 import menu from '../assets/icons/menue.png'
 import close from '../assets/icons/close.png'
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'
-import { NavbarData } from '../../data'
+import { getNavbarData } from '../../data'
 import RegistrationBtns from './RegistrationBtns'
 import { useAuth } from '../Auth/AuthProvider'
 
@@ -66,6 +66,9 @@ const Navbar = () => {
       return '/patient-profile'
     }
   }
+
+  // Get navbar data based on user role
+  const navbarData = getNavbarData(userRole)
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const handlelogout = () => {
@@ -208,7 +211,7 @@ const Navbar = () => {
             </Link>
             <div className='flex items-center gap-14'>
               {
-                NavbarData.map((item) => (
+                navbarData.map((item) => (
                   <div key={item.name}>
                     <NavLink className={({ isActive }) =>
                       isActive ? 'text-Primary font-[600] text-lg' : ' text-Secondary-mediumGray text-lg hover:text-Primary hover:font-[500]'
@@ -273,7 +276,7 @@ const Navbar = () => {
         <div className={`sidebar ${toggle ? "open" : "close"} `}>
           <div className="p-10 pt-24">
             <ul>
-              {NavbarData.map((item, index) => (
+              {navbarData.map((item, index) => (
                 <div key={item.name} className="flex justify-center mt-10">
                   <li className=' m-auto'>
                     <NavLink className={({ isActive }) =>

@@ -5,6 +5,7 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
     const [auth, setAuth] = useState(false);
     const [user, setUser] = useState(null);
+    const [isLoading, setIsLoading] = useState(true); // Add loading state
 
     useEffect(() => {
         // Check for stored authentication state on component mount
@@ -14,8 +15,17 @@ export const AuthProvider = ({ children }) => {
 
         if (storedAuth === "true" && storedUser) {
             setAuth(true);
-            setUser({ ...JSON.parse(storedUser), role: storedRole });
+            try {
+                const userData = JSON.parse(storedUser);
+                setUser({ ...userData, role: storedRole });
+            } catch (error) {
+                // If parsing fails, treat storedUser as a string
+                setUser({ userName: storedUser, role: storedRole });
+            }
         }
+        
+        // Set loading to false after checking localStorage
+        setIsLoading(false);
     }, []);
 
     const login = (userData, userRole) => {
@@ -36,7 +46,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ auth, user, login, logOut, setAuth }}>
+        <AuthContext.Provider value={{ auth, user, login, logOut, setAuth, isLoading }}>
             {children}
         </AuthContext.Provider>
     );

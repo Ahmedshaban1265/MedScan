@@ -4,7 +4,8 @@ import icon3 from "./src/assets/icons/microscope3.png";
 import icon4 from "./src/assets/icons/microscope4.png";
 import meet1 from "./src/assets/meet1.png";
 import meet2 from "./src/assets/meet2.png";
-export const NavbarData = [
+// Base navbar data for all users
+const baseNavbarData = [
 	{
 		name: "Home",
 		path: "/",
@@ -12,10 +13,6 @@ export const NavbarData = [
 	{
 		name: "Services",
 		path: "/services",
-	},
-	{
-		name: "Booking",
-		path: "/booking",
 	},
 	{
 		name: "About Us",
@@ -26,6 +23,29 @@ export const NavbarData = [
 		path: "/contact",
 	},
 ];
+
+// Booking item for patients only
+const bookingNavItem = {
+	name: "Booking",
+	path: "/booking",
+};
+
+// Function to get navbar data based on user role
+export const getNavbarData = (userRole) => {
+	// If user is a doctor, don't show booking
+	if (userRole === "Doctor") {
+		return baseNavbarData;
+	}
+
+	// For patients and non-logged users, show booking
+	// Insert booking after Services (index 1)
+	const navData = [...baseNavbarData];
+	navData.splice(2, 0, bookingNavItem);
+	return navData;
+};
+
+// Default export for backward compatibility (shows booking for non-logged users)
+export const NavbarData = getNavbarData();
 
 export const whySectionData = [
 	{
@@ -75,48 +95,48 @@ export const MeetSectionData = [
 
 export const QuestionData = [
 	{
-        id:1,
+		id: 1,
 		question: "Causes of Brain Tumor and ways to avoid contracting the disease",
-		answer: 
-			{
-				title: "Some tips to prevent Brain Tumor",
-				answ1: "1 . Reduce exposure to radiation",
-				answ2: "2 . Adopt a healthy diet",
-				answ3: "3 . Exercise regularly",
-				answ4: "4 . Periodic medical examination",
-				answ5: "5 . Stress management",
-				answ6: "6 . Reducing exposure to harmful chemicals",
-			},
-		
+		answer:
+		{
+			title: "Some tips to prevent Brain Tumor",
+			answ1: "1 . Reduce exposure to radiation",
+			answ2: "2 . Adopt a healthy diet",
+			answ3: "3 . Exercise regularly",
+			answ4: "4 . Periodic medical examination",
+			answ5: "5 . Stress management",
+			answ6: "6 . Reducing exposure to harmful chemicals",
+		},
+
 	},
-    {
-        id:2,
+	{
+		id: 2,
 		question: "Causes of Skin Cancer and ways to avoid contracting the disease",
-		answer: 
-			{
-				title: "Some tips to prevent Skin Cancer",
-				answ1: "1 . Reduce exposure to radiation",
-				answ2: "2 . Adopt a healthy diet",
-				answ3: "3 . Exercise regularly",
-				answ4: "4 . Periodic medical examination",
-				answ5: "5 . Stress management",
-				answ6: "6 . Reducing exposure to harmful chemicals",
-			},
-		
+		answer:
+		{
+			title: "Some tips to prevent Skin Cancer",
+			answ1: "1 . Reduce exposure to radiation",
+			answ2: "2 . Adopt a healthy diet",
+			answ3: "3 . Exercise regularly",
+			answ4: "4 . Periodic medical examination",
+			answ5: "5 . Stress management",
+			answ6: "6 . Reducing exposure to harmful chemicals",
+		},
+
 	},
-    {
-        id:3,
+	{
+		id: 3,
 		question: "Some tips to prevent Skin Cancer",
-		answer: 
-			{
-				title: "Some tips to prevent Skin Cance",
-				answ1: "1 . Reduce exposure to radiation",
-				answ2: "2 . Adopt a healthy diet",
-				answ3: "3 . Exercise regularly",
-				answ4: "4 . Periodic medical examination",
-				answ5: "5 . Stress management",
-				answ6: "6 . Reducing exposure to harmful chemicals",
-			},
-		
+		answer:
+		{
+			title: "Some tips to prevent Skin Cance",
+			answ1: "1 . Reduce exposure to radiation",
+			answ2: "2 . Adopt a healthy diet",
+			answ3: "3 . Exercise regularly",
+			answ4: "4 . Periodic medical examination",
+			answ5: "5 . Stress management",
+			answ6: "6 . Reducing exposure to harmful chemicals",
+		},
+
 	},
 ];

@@ -1,9 +1,15 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
+import { useAuth } from '../Auth/AuthProvider'
 
 const ScanResult = () => {
     const location = useLocation()
     const { selectedDisease, uploadedImage, scanResults } = location.state || {}
+    const { user } = useAuth()
+    
+    // Get user role from localStorage or user object
+    const storedRole = localStorage.getItem("userRole")
+    const userRole = user?.role || storedRole
 
     // If no scanResults are passed, display an error or default to mock data
     if (!scanResults) {
@@ -114,19 +120,24 @@ const ScanResult = () => {
                                 onClick={() => window.history.back()}
                                 className='flex-1 bg-gray-200 text-gray-800 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition-colors'
                             >
-                                Scan Again                            </button>
+                                Scan Again                            
+                            </button>
                             <button 
                                 onClick={() => window.print()}
                                 className='flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors'
                             >
                                 Download Report
                             </button>
-                            <button 
-                                onClick={() => window.location.href = '/booking'}
-                                className='flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors'
-                            >
-                                Book Appointment
-                            </button>                        </div>
+                            {/* Only show Book Appointment button for patients */}
+                            {userRole !== "Doctor" && (
+                                <button 
+                                    onClick={() => window.location.href = '/booking'}
+                                    className='flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors'
+                                >
+                                    Book Appointment
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
 
