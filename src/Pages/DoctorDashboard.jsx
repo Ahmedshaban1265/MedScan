@@ -106,27 +106,34 @@ const DoctorDashboard = () => {
             setLoading(false);
         }
     };
+    const statusMap = {
+        'Pending': 0,
+        'Confirmed': 1,
+        'Completed': 2
+    };
 
     // Update appointment status
-    const updateAppointmentStatus = async (appointmentId, status) => {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) return;
+    const updateAppointmentStatus = async (appointmentId, statusText) => {
+        const status = statusMap[statusText]; // ← تحويل النص إلى رقم
+        const token = localStorage.getItem('token');
+        if (!token) return;
 
+        try {
             const response = await fetch(`https://medscanapi.runasp.net/api/Appointment/${appointmentId}/status`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ status })
+                body: JSON.stringify({ status })  // ← إرسال رقم الحالة
             });
 
             if (response.ok) {
-                // Refresh dashboard data
                 fetchDashboardData();
                 alert('Appointment status updated successfully!');
             } else {
+                const errText = await response.text();
+                console.error('Error response:', errText);
                 alert('Failed to update appointment status');
             }
         } catch (err) {
@@ -134,6 +141,7 @@ const DoctorDashboard = () => {
             alert('Error updating appointment status');
         }
     };
+
 
     useEffect(() => {
         fetchDashboardData();
@@ -261,8 +269,8 @@ const DoctorDashboard = () => {
                                                     {new Date(appointment.appointmentDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {appointment.appointmentType || 'Routine Checkup'}
                                                 </p>
                                                 <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium mt-1 ${appointment.status === 'Confirmed' ? 'bg-green-100 text-green-800' :
-                                                        appointment.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                            'bg-gray-100 text-gray-800'
+                                                    appointment.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                        'bg-gray-100 text-gray-800'
                                                     }`}>
                                                     {appointment.status || 'Confirmed'}
                                                 </span>
@@ -324,8 +332,8 @@ const DoctorDashboard = () => {
                                                     {appointment.appointmentType || 'Consultation'}
                                                 </p>
                                                 <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium mt-1 ${appointment.status === 'Confirmed' ? 'bg-green-100 text-green-800' :
-                                                        appointment.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                            'bg-gray-100 text-gray-800'
+                                                    appointment.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                        'bg-gray-100 text-gray-800'
                                                     }`}>
                                                     {appointment.status || 'Pending'}
                                                 </span>
