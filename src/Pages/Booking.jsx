@@ -8,9 +8,6 @@ const Booking = () => {
     const [formData, setFormData] = useState({
         appointmentDate: '',
         appointmentTime: '',
-        fullName: '',
-        phoneNumber: '',
-        emailAddress: '',
         additionalNotes: ''
     });
     const [loading, setLoading] = useState(false);
@@ -81,9 +78,6 @@ const Booking = () => {
                 setFormData({
                     appointmentDate: '',
                     appointmentTime: '',
-                    fullName: '',
-                    phoneNumber: '',
-                    emailAddress: '',
                     additionalNotes: ''
                 });
                 setSelectedDoctor(null);
@@ -221,47 +215,6 @@ const Booking = () => {
                                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Patient Information</h3>
 
                                 <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Full Name
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="fullName"
-                                            value={formData.fullName}
-                                            onChange={handleInputChange}
-                                            required
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Phone Number
-                                        </label>
-                                        <input
-                                            type="tel"
-                                            name="phoneNumber"
-                                            value={formData.phoneNumber}
-                                            onChange={handleInputChange}
-                                            required
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Email Address
-                                        </label>
-                                        <input
-                                            type="email"
-                                            name="emailAddress"
-                                            value={formData.emailAddress}
-                                            onChange={handleInputChange}
-                                            required
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        />
-                                    </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">

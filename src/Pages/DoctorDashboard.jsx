@@ -255,7 +255,7 @@ const DoctorDashboard = () => {
                                         <div className="flex justify-between items-start">
                                             <div>
                                                 <h4 className="font-medium text-gray-900">
-                                                    {appointment.patientName || 'Ahmed Mohamed'}
+                                                    {appointment.patient?.firstName} {appointment.patient?.lastName}
                                                 </h4>
                                                 <p className="text-sm text-gray-600">
                                                     {new Date(appointment.appointmentDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {appointment.appointmentType || 'Routine Checkup'}
@@ -315,7 +315,7 @@ const DoctorDashboard = () => {
                                         <div className="flex justify-between items-start">
                                             <div>
                                                 <h4 className="font-medium text-gray-900">
-                                                    {appointment.patientName || 'Fatima Ali'}
+                                                    {appointment.patient?.firstName} {appointment.patient?.lastName}
                                                 </h4>
                                                 <p className="text-sm text-gray-600">
                                                     {new Date(appointment.appointmentDate).toLocaleDateString()} at {new Date(appointment.appointmentDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
