@@ -116,11 +116,27 @@ const DoctorDashboard = () => {
         'Completed': 2
     };
 
-    // Update appointment status
+    const statusNames = {
+        0: 'Pending',
+        1: 'Confirmed', 
+        2: 'Completed'
+    };
+
+    // Update appointment status with improved UI feedback
     const updateAppointmentStatus = async (appointmentId, statusText) => {
-        const status = statusMap[statusText]; // ← تحويل النص إلى رقم
+        const status = statusMap[statusText];
         const token = localStorage.getItem('token');
-        if (!token) return;
+        if (!token) {
+            alert('Authentication token not found. Please login again.');
+            return;
+        }
+
+        // Show loading state
+        const buttonElement = document.querySelector(`[data-appointment-id="${appointmentId}"][data-action="${statusText}"]`);
+        if (buttonElement) {
+            buttonElement.disabled = true;
+            buttonElement.textContent = 'Updating...';
+        }
 
         try {
             const response = await fetch(`https://medscanapi.runasp.net/api/Appointment/${appointmentId}/status`, {
@@ -129,20 +145,43 @@ const DoctorDashboard = () => {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ status })  // ← إرسال رقم الحالة
+                body: JSON.stringify({ status })
             });
 
             if (response.ok) {
-                fetchDashboardData();
-                alert('Appointment status updated successfully!');
+                // Immediately update the local state for better UX
+                setDashboardData(prevData => {
+                    const updateAppointmentInList = (appointments) => 
+                        appointments.map(apt => 
+                            apt.id === appointmentId 
+                                ? { ...apt, status: status } // Use numeric status
+                                : apt
+                        );
+
+                    return {
+                        ...prevData,
+                        appointmentsToday: updateAppointmentInList(prevData.appointmentsToday),
+                        upcomingAppointments: updateAppointmentInList(prevData.upcomingAppointments)
+                    };
+                });
+
+                // Then fetch fresh data from server
+                await fetchDashboardData();
+                alert(`Appointment ${statusText.toLowerCase()} successfully!`);
             } else {
                 const errText = await response.text();
                 console.error('Error response:', errText);
-                alert('Failed to update appointment status');
+                alert(`Failed to update appointment status: ${errText}`);
             }
         } catch (err) {
             console.error('Error updating appointment status:', err);
-            alert('Error updating appointment status');
+            alert('Network error. Please check your connection and try again.');
+        } finally {
+            // Reset button state
+            if (buttonElement) {
+                buttonElement.disabled = false;
+                buttonElement.textContent = statusText;
+            }
         }
     };
 
@@ -275,25 +314,41 @@ const DoctorDashboard = () => {
                                                 <p className="text-sm text-gray-600">
                                                     {new Date(appointment.appointmentDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {appointment.appointmentType || 'Routine Checkup'}
                                                 </p>
-                                                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium mt-1 ${appointment.status === 'Confirmed' ? 'bg-green-100 text-green-800' :
-                                                    appointment.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium mt-1 ${
+                                                    statusNames[appointment.status] === 'Confirmed' ? 'bg-green-100 text-green-800' :
+                                                    statusNames[appointment.status] === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                    statusNames[appointment.status] === 'Completed' ? 'bg-blue-100 text-blue-800' :
                                                         'bg-gray-100 text-gray-800'
                                                     }`}>
-                                                    {appointment.status || 'Confirmed'}
+                                                    {statusNames[appointment.status] || 'Unknown'}
                                                 </span>
                                             </div>
                                             <div className="flex gap-2">
                                                 <button
+                                                    data-appointment-id={appointment.id}
+                                                    data-action="Confirmed"
                                                     onClick={() => updateAppointmentStatus(appointment.id, 'Confirmed')}
-                                                    className="px-3 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600 transition-colors"
+                                                    disabled={statusNames[appointment.status] === 'Confirmed'}
+                                                    className={`px-3 py-1 text-xs rounded transition-colors ${
+                                                        statusNames[appointment.status] === 'Confirmed' 
+                                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                                                            : 'bg-green-500 text-white hover:bg-green-600'
+                                                    }`}
                                                 >
-                                                    Confirm
+                                                    {statusNames[appointment.status] === 'Confirmed' ? 'Confirmed' : 'Confirm'}
                                                 </button>
                                                 <button
+                                                    data-appointment-id={appointment.id}
+                                                    data-action="Completed"
                                                     onClick={() => updateAppointmentStatus(appointment.id, 'Completed')}
-                                                    className="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors"
+                                                    disabled={statusNames[appointment.status] === 'Completed'}
+                                                    className={`px-3 py-1 text-xs rounded transition-colors ${
+                                                        statusNames[appointment.status] === 'Completed' 
+                                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+                                                            : 'bg-blue-500 text-white hover:bg-blue-600'
+                                                    }`}
                                                 >
-                                                    Complete
+                                                    {statusNames[appointment.status] === 'Completed' ? 'Completed' : 'Complete'}
                                                 </button>
                                             </div>
                                         </div>
@@ -308,7 +363,7 @@ const DoctorDashboard = () => {
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-xl font-semibold text-gray-900">Upcoming Appointments</h2>
                             <Link
-                                to="/appointments"
+                                to="/all-appointments"
                                 className="text-Primary hover:text-Primary-dark text-sm font-medium"
                             >
                                 View All Appointments →

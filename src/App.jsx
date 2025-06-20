@@ -14,6 +14,7 @@ import ScanResult from "./Pages/ScanResult"
 import Booking from "./Pages/Booking"
 import PatientProfile from "./Pages/PatientProfile"
 import DoctorProfile from "./Pages/DoctorProfile"
+import AllAppointments from "./Pages/AllAppointments"
 import DoctorDashboard from "./Pages/DoctorDashboard"
 import { AuthProvider } from "./Auth/AuthProvider"
 
@@ -35,7 +36,8 @@ function App() {
           <Route path="/scan" element={<PrivateRoute> <Scan /> </PrivateRoute>} />
           <Route path="/patient-profile" element={ <PrivateRoute> <PatientProfile /> </PrivateRoute>} />
           <Route path="/doctor-profile" element={ <PrivateRoute> <DoctorProfile /> </PrivateRoute>} />
-          <Route path="/doctor-dashboard" element={ <PrivateRoute> <DoctorDashboard /> </PrivateRoute>} />
+          <Route path="/doctor-dashboard" element={<PrivateRoute> <DoctorDashboard /> </PrivateRoute>} />
+          <Route path="/all-appointments" element={ <PrivateRoute> <AllAppointments /> </PrivateRoute>} />
         </Routes>
         <Footer />
       </AuthProvider>
