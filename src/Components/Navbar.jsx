@@ -6,11 +6,22 @@ import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { getNavbarData } from '../../data'
 import RegistrationBtns from './RegistrationBtns'
 import { useAuth } from '../Auth/AuthProvider'
+import NotificationIcon from './NotificationIcon'
+import NotificationDropdown from './NotificationDropdown'
+import { useNotifications } from '../Auth/NotificationContext'
 
 const Navbar = () => {
   const { user, logOut } = useAuth()
+  const { unreadCount, notifications } = useNotifications()
   const navigate = useNavigate()
   const location = useLocation()
+
+  // Refs for dropdown menus
+  const userDropdownRef = useRef(null)
+  const notificationDropdownRef = useRef(null)
+
+  // Notification dropdown state
+  const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false)
 
   const storedUsername = localStorage.getItem('userName')
   const storedUserData = localStorage.getItem('user')
@@ -71,6 +82,16 @@ const Navbar = () => {
   const navbarData = getNavbarData(userRole)
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  
+  // Notification handlers
+  const handleNotificationClick = () => {
+    setIsNotificationDropdownOpen(!isNotificationDropdownOpen)
+  }
+
+  const handleNotificationUpdate = (updatedNotifications) => {
+    // This will be handled by the NotificationContext
+  }
+
   const handlelogout = () => {
     setIsDropdownOpen(false)
     logOut()
@@ -123,27 +144,37 @@ const Navbar = () => {
     if (toggle && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
       setToggle(false)
     }
+    
+    // Close user dropdown if clicking outside
+    if (isDropdownOpen && userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+      setIsDropdownOpen(false)
+    }
+    
+    // Close notification dropdown if clicking outside
+    if (isNotificationDropdownOpen && notificationDropdownRef.current && !notificationDropdownRef.current.contains(event.target)) {
+      setIsNotificationDropdownOpen(false)
+    }
   }
 
-  useEffect(() => {
-    const handleSize = () => {
-      if (window.innerWidth <= 1024) {
-        setshowmenuIcon(true)
-      } else {
-        setshowmenuIcon(false)
-        setToggle(false)
-      }
+useEffect(() => {
+  const handleSize = () => {
+    if (window.innerWidth <= 1024) {
+      setshowmenuIcon(true)
+    } else {
+      setshowmenuIcon(false)
+      setToggle(false)
     }
+  }
 
-    handleSize()
-    window.addEventListener('resize', handleSize)
-    document.addEventListener('mousedown', handleClickOutside)
+  handleSize()
+  window.addEventListener('resize', handleSize)
+  document.addEventListener('mousedown', handleClickOutside)
 
-    return () => {
-      window.removeEventListener('resize', handleSize)
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [toggle, showmenuIcon])
+  return () => {
+    window.removeEventListener('resize', handleSize)
+    document.removeEventListener('mousedown', handleClickOutside)
+  }
+}, [toggle, showmenuIcon, isDropdownOpen, isNotificationDropdownOpen])
 
   return (
     <section className='' >
@@ -158,50 +189,68 @@ const Navbar = () => {
             </div>
             
 
-            <div className='relative'>
-              {
-                user ? (
-                  <button onClick={toggleDropdown} className=' cursor-pointer flex items-center gap-2 px-4 py-2'>
-                    <svg className='fill-Primary mb-2' width={20} height={20} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-                      <path d="M182.6 470.6c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8l256 0c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128z" />
-                    </svg>
-                    <p className='text-[14px] font-semibold capitalize'>
-                      {displayedUsername || 'User'}
-                    </p>
-                    <p className='font-bold bg-Primary px-[10px] py-1 text-white rounded-full shadow-xl'>
-                      {(displayedUsername || 'U').charAt(0).toUpperCase()}
-                    </p>
-                  </button>
-                ) : (
-                  renderRegistrationButtons('gap-1', 'px-3 py-1 text-[12px] font-[500]')
-                )
-              }
+            <div className='flex items-center gap-3'>
+              {/* Notification Icon for Mobile */}
+              {user && (
+                <div className="relative" ref={notificationDropdownRef}>
+                  <NotificationIcon 
+                    unreadCount={unreadCount}
+                    onClick={handleNotificationClick}
+                    className="mr-2"
+                  />
+                  <NotificationDropdown
+                    isOpen={isNotificationDropdownOpen}
+                    onClose={() => setIsNotificationDropdownOpen(false)}
+                    onNotificationUpdate={handleNotificationUpdate}
+                  />
+                </div>
+              )}
 
-              <div>
+              <div className='relative' ref={userDropdownRef}>
                 {
-                  isDropdownOpen &&
-                  <div className='z-30 absolute top-[66px] bg-white w-full cursor-pointer border-2 text-center'>
-                    <Link
-                      to={getProfileLink()}
-                      className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
-                      {userRole === "Doctor" ? 'Dashboard' : 'Profile'}
-                    </Link>
-                    {userRole === "Doctor" && (
+                  user ? (
+                    <button onClick={toggleDropdown} className=' cursor-pointer flex items-center gap-2 px-4 py-2'>
+                      <svg className='fill-Primary mb-2' width={20} height={20} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                        <path d="M182.6 470.6c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8l256 0c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128z" />
+                      </svg>
+                      <p className='text-[14px] font-semibold capitalize'>
+                        {displayedUsername || 'User'}
+                      </p>
+                      <p className='font-bold bg-Primary px-[10px] py-1 text-white rounded-full shadow-xl'>
+                        {(displayedUsername || 'U').charAt(0).toUpperCase()}
+                      </p>
+                    </button>
+                  ) : (
+                    renderRegistrationButtons('gap-1', 'px-3 py-1 text-[12px] font-[500]')
+                  )
+                }
+
+                <div>
+                  {
+                    isDropdownOpen &&
+                    <div className='z-30 absolute top-[66px] bg-white w-full cursor-pointer border-2 text-center'>
                       <Link
-                        to="/doctor-profile"
+                        to={getProfileLink()}
                         className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
                         onClick={() => setIsDropdownOpen(false)}
                       >
-                        Profile
+                        {userRole === "Doctor" ? 'Dashboard' : 'Profile'}
                       </Link>
-                    )}
-                    <button onClick={handlelogout} className='w-full text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'>
-                      Logout
-                    </button>
-                  </div>
-                }
+                      {userRole === "Doctor" && (
+                        <Link
+                          to="/doctor-profile"
+                          className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          Profile
+                        </Link>
+                      )}
+                      <button onClick={handlelogout} className='w-full text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'>
+                        Logout
+                      </button>
+                    </div>
+                  }
+                </div>
               </div>
             </div>
           </div>
@@ -222,50 +271,67 @@ const Navbar = () => {
               }
             </div>
 
-            <div className='relative'>
-              {
-                user ? (
-                  <button onClick={toggleDropdown} className=' cursor-pointer flex items-center gap-3 px-4 py-2'>
-                    <svg className='fill-Primary mb-2' width={25} height={25} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-                      <path d="M182.6 470.6c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8l256 0c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128z" />
-                    </svg>
-                    <p className='text-[14px] font-semibold capitalize'>
-                      {displayedUsername || 'User'}
-                    </p>
-                    <p className='font-bold bg-Primary px-3 py-2 text-white rounded-full shadow-xl'>
-                      {(displayedUsername || 'U').charAt(0).toUpperCase()}
-                    </p>
-                  </button>
-                ) : (
-                  renderRegistrationButtons('gap-5', 'px-8 py-2 text-[17px] font-[600]')
-                )
-              }
+            <div className='flex items-center gap-4'>
+              {/* Notification Icon for Desktop */}
+              {user && (
+                <div className="relative" ref={notificationDropdownRef}>
+                  <NotificationIcon 
+                    unreadCount={unreadCount}
+                    onClick={handleNotificationClick}
+                  />
+                  <NotificationDropdown
+                    isOpen={isNotificationDropdownOpen}
+                    onClose={() => setIsNotificationDropdownOpen(false)}
+                    onNotificationUpdate={handleNotificationUpdate}
+                  />
+                </div>
+              )}
 
-              <div>
+              <div className='relative' ref={userDropdownRef}>
                 {
-                  isDropdownOpen &&
-                  <div className='z-30 absolute top-[66px] bg-white w-full cursor-pointer border-2 text-center'>
-                    <Link
-                      to={getProfileLink()}
-                      className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
-                      {userRole === "Doctor" ? 'Dashboard' : 'Profile'}
-                    </Link>
-                    {userRole === "Doctor" && (
+                  user ? (
+                    <button onClick={toggleDropdown} className=' cursor-pointer flex items-center gap-3 px-4 py-2'>
+                      <svg className='fill-Primary mb-2' width={25} height={25} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+                        <path d="M182.6 470.6c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8l256 0c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128z" />
+                      </svg>
+                      <p className='text-[14px] font-semibold capitalize'>
+                        {displayedUsername || 'User'}
+                      </p>
+                      <p className='font-bold bg-Primary px-3 py-2 text-white rounded-full shadow-xl'>
+                        {(displayedUsername || 'U').charAt(0).toUpperCase()}
+                      </p>
+                    </button>
+                  ) : (
+                    renderRegistrationButtons('gap-5', 'px-8 py-2 text-[17px] font-[600]')
+                  )
+                }
+
+                <div>
+                  {
+                    isDropdownOpen &&
+                    <div className='z-30 absolute top-[66px] bg-white w-full cursor-pointer border-2 text-center'>
                       <Link
-                        to="/doctor-profile"
+                        to={getProfileLink()}
                         className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
                         onClick={() => setIsDropdownOpen(false)}
                       >
-                        Profile
+                        {userRole === "Doctor" ? 'Dashboard' : 'Profile'}
                       </Link>
-                    )}
-                    <button onClick={handlelogout} className='w-full text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'>
-                      Logout
-                    </button>
-                  </div>
-                }
+                      {userRole === "Doctor" && (
+                        <Link
+                          to="/doctor-profile"
+                          className='block text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          Profile
+                        </Link>
+                      )}
+                      <button onClick={handlelogout} className='w-full text-black-medium font-semibold py-2 text-[15px] hover:bg-gray-100'>
+                        Logout
+                      </button>
+                    </div>
+                  }
+                </div>
               </div>
             </div>
           </div>
