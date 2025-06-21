@@ -17,31 +17,37 @@ import DoctorProfile from "./Pages/DoctorProfile"
 import AllAppointments from "./Pages/AllAppointments"
 import Patients from "./Pages/Patients"
 import DoctorDashboard from "./Pages/DoctorDashboard"
+import Notifications from "./Components/Notifications"
 import { AuthProvider } from "./Auth/AuthProvider"
+import { NotificationProvider } from "./Auth/NotificationContext"
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/booking" element={<PrivateRoute><Booking /></PrivateRoute> } />
-          <Route path="/about" element={<AboutUs />} />
-          <Route path="/contact" element={<ContactUs />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signUp" element={<SignUp />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/scan-result" element={<ScanResult />} />
-          <Route path="/scan" element={<PrivateRoute> <Scan /> </PrivateRoute>} />
-          <Route path="/patient-profile" element={ <PrivateRoute> <PatientProfile /> </PrivateRoute>} />
-          <Route path="/doctor-profile" element={ <PrivateRoute> <DoctorProfile /> </PrivateRoute>} />
-          <Route path="/doctor-dashboard" element={<PrivateRoute> <DoctorDashboard /> </PrivateRoute>} />
-          <Route path="/all-appointments" element={<PrivateRoute> <AllAppointments /> </PrivateRoute>} />
-          <Route path="/patients" element={<PrivateRoute><Patients /></PrivateRoute>} />
-        </Routes>
-        <Footer />
+        <NotificationProvider>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/booking" element={<PrivateRoute><Booking /></PrivateRoute>} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signUp" element={<SignUp />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/scan-result" element={<ScanResult />} />
+            <Route path="/scan" element={<PrivateRoute> <Scan /> </PrivateRoute>} />
+            <Route path="/patient-profile" element={<PrivateRoute> <PatientProfile /> </PrivateRoute>} />
+            <Route path="/doctor-profile" element={<PrivateRoute> <DoctorProfile /> </PrivateRoute>} />
+            <Route path="/doctor-dashboard" element={<PrivateRoute> <DoctorDashboard /> </PrivateRoute>} />
+            {/* <Route path="/clinic-info" element={<PrivateRoute> <ClinicInfo /> </PrivateRoute>} /> */}
+            <Route path="/all-appointments" element={<PrivateRoute> <AllAppointments /> </PrivateRoute>} />
+            <Route path="/patients" element={<PrivateRoute><Patients /></PrivateRoute>} />
+            <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
+          </Routes>
+          <Footer />
+        </NotificationProvider>
       </AuthProvider>
     </BrowserRouter>
   )

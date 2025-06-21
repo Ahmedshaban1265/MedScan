@@ -749,7 +749,7 @@ const DoctorDashboard = () => {
                 {/* Quick Actions */}
                 <div className="mt-8 bg-white rounded-lg shadow-sm p-6">
                     <h2 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                         <button 
                             onClick={handleAddNewAppointment}
                             className="p-4 bg-Primary text-white rounded-lg hover:bg-Primary-dark transition-colors text-center"
@@ -779,6 +779,16 @@ const DoctorDashboard = () => {
                             </svg>
                             Manage Schedule
                         </button>
+
+                        <Link
+                            to="/clinic-info"
+                            className="p-4 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-center block"
+                        >
+                            <svg className="w-6 h-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                            Clinic Information
+                        </Link>
 
                         <Link
                             to="/doctor-profile"
