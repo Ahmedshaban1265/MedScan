@@ -24,7 +24,7 @@ const SignUp = () => {
         phoneNumber: '',
         gender: '',
         dateOfBirth: '',
-        role: '', 
+        role: '',
         specialization: '',
         bio: '',
         profilePictureUrl: ''
@@ -118,7 +118,7 @@ const SignUp = () => {
             } else {
                 setMessage(responseData.message || 'Account creation failed')
                 setMessageType('failed')
-                
+
                 console.error('Registration error:', responseData);
             }
         } catch (e) {
@@ -161,12 +161,12 @@ const SignUp = () => {
                 </div>
                 <form onSubmit={handleSubmit} className='bg-white w-full lg:w-1/2 h-full lg:w-1/2 overflow-y-auto  rounded-e-3xl px-8 py-5'>
                     <h2 className='text-center font-semibold text-2xl py-3'>Create your account!</h2>
-                    
+
                     {/* Account Type Selection - Dropdown */}
                     <div className='py-2'>
                         <label className='block mb-2 text-[14px] font-semibold'>Account Type</label>
-                        <select 
-                            name="role" 
+                        <select
+                            name="role"
                             value={registerData.role}
                             onChange={handleRegisterChange}
                             disabled={isLoading}
@@ -176,59 +176,58 @@ const SignUp = () => {
                             <option value="Doctor">Doctor</option>
                         </select>
                     </div>
-                    
+
                     <div className='flex gap-3 py-1'>
                         <div className=''>
                             <label className='block  mb-2 text-[14px]'>First Name</label>
-                            <input 
-                                onChange={handleRegisterChange} 
-                                name='firstName' 
-                                value={registerData.firstName} 
-                                placeholder='First Name' 
+                            <input
+                                onChange={handleRegisterChange}
+                                name='firstName'
+                                value={registerData.firstName}
+                                placeholder='First Name'
                                 required
                                 disabled={isLoading}
-                                className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
+                                className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50'
                             />
                         </div>
                         <div>
                             <label className='block  mb-2 text-[14px]'>Last Name</label>
-                            <input 
-                                onChange={handleRegisterChange} 
-                                name='lastName' 
-                                value={registerData.lastName} 
-                                placeholder='Last Name' 
+                            <input
+                                onChange={handleRegisterChange}
+                                name='lastName'
+                                value={registerData.lastName}
+                                placeholder='Last Name'
                                 required
                                 disabled={isLoading}
-                                className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
+                                className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50'
                             />
                         </div>
                     </div>
 
                     <div className='py-1'>
                         <label className='block  mb-2 text-[14px]'>Username</label>
-                        <input 
-                            onChange={handleRegisterChange} 
-                            name='userName' 
-                            value={registerData.userName} 
-                            placeholder='Username' 
+                        <input
+                            onChange={handleRegisterChange}
+                            name='userName'
+                            value={registerData.userName}
+                            placeholder='Username'
                             required
                             disabled={isLoading}
-                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
+                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50'
                         />
                     </div>
 
                     <div className='py-1'>
-                        <label className='block  mb-2 text-[14px]
-'>Email</label>
-                        <input 
-                            onChange={handleRegisterChange} 
-                            name='email' 
-                            value={registerData.email} 
-                            placeholder='Email' 
+                        <label className='block  mb-2 text-[14px]'>Email</label>
+                        <input
+                            onChange={handleRegisterChange}
+                            name='email'
+                            value={registerData.email}
+                            placeholder='Email'
                             type="email"
                             required
                             disabled={isLoading}
-                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
+                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50'
                         />
                     </div>
 
@@ -237,26 +236,26 @@ const SignUp = () => {
                         <>
                             <div className='py-1'>
                                 <label className='block mb-2 text-[14px]'>Specialization *</label>
-                                <input 
-                                    onChange={handleRegisterChange} 
-                                    name='specialization' 
-                                    value={registerData.specialization} 
-                                    placeholder='e.g., Cardiology, Radiology, Internal Medicine' 
+                                <input
+                                    onChange={handleRegisterChange}
+                                    name='specialization'
+                                    value={registerData.specialization}
+                                    placeholder='e.g., Cardiology, Radiology, Internal Medicine'
                                     required
                                     disabled={isLoading}
-                                    className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
+                                    className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50'
                                 />
                             </div>
                             <div className='py-1'>
                                 <label className='block mb-2 text-[14px]'>Bio (Optional)</label>
-                                <textarea 
-                                    onChange={handleRegisterChange} 
-                                    name='bio' 
-                                    value={registerData.bio} 
-                                    placeholder='Brief description about your experience and approach...' 
+                                <textarea
+                                    onChange={handleRegisterChange}
+                                    name='bio'
+                                    value={registerData.bio}
+                                    placeholder='Brief description about your experience and approach...'
                                     rows={3}
                                     disabled={isLoading}
-                                    className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50 resize-none' 
+                                    className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50 resize-none'
                                 />
                             </div>
                         </>
@@ -265,83 +264,83 @@ const SignUp = () => {
                     <div className='flex gap-3 py-1'>
                         <div className='w-1/2'>
                             <label className='block mb-2 text-[14px]'>Gender (Optional)</label>
-                            <select 
-                                onChange={handleRegisterChange} 
-                                name='gender' 
-                                value={registerData.gender} 
+                            <select
+                                onChange={handleRegisterChange}
+                                name='gender'
+                                value={registerData.gender}
                                 disabled={isLoading}
                                 className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 text-sm disabled:opacity-50'
                             >
                                 <option value="">Select Gender</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
-                                <option value="Other">Other</option>
+                                
                             </select>
                         </div>
                         <div className='w-1/2'>
                             <label className='block mb-2 text-[14px]'>Date of Birth (Optional)</label>
-                            <input 
-                                onChange={handleRegisterChange} 
-                                name='dateOfBirth' 
-                                value={registerData.dateOfBirth} 
+                            <input
+                                onChange={handleRegisterChange}
+                                name='dateOfBirth'
+                                value={registerData.dateOfBirth}
                                 type="date"
                                 disabled={isLoading}
-                                className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 text-sm disabled:opacity-50' 
+                                className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 text-sm disabled:opacity-50'
                             />
                         </div>
                     </div>
 
                     <div className='py-1'>
                         <label className='block mb-2 text-[14px]'>Phone Number (Optional)</label>
-                        <input 
-                            onChange={handleRegisterChange} 
-                            name='phoneNumber' 
-                            value={registerData.phoneNumber} 
-                            placeholder='Phone Number' 
+                        <input
+                            onChange={handleRegisterChange}
+                            name='phoneNumber'
+                            value={registerData.phoneNumber}
+                            placeholder='Phone Number'
                             type="tel"
                             disabled={isLoading}
-                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
+                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50'
                         />
                     </div>
 
                     <div className='py-1'>
                         <label className='block  mb-2 text-[14px]'>Password</label>
-                        <input 
-                            onChange={handleRegisterChange} 
-                            name='password' 
-                            value={registerData.password} 
-                            type='password' 
-                            placeholder='Password (min 6 characters)' 
+                        <input
+                            onChange={handleRegisterChange}
+                            name='password'
+                            value={registerData.password}
+                            type='password'
+                            placeholder='Password (min 6 characters)'
                             required
                             disabled={isLoading}
-                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
+                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50'
                         />
                     </div>
 
                     <div className='py-1'>
                         <label className='block  mb-2 text-[14px]'>Confirm Password</label>
-                        <input 
-                            onChange={handleRegisterChange} 
-                            name='confirmPassword' 
-                            value={registerData.confirmPassword} 
-                            type='password' 
-                            placeholder='Confirm Password' 
+                        <input
+                            onChange={handleRegisterChange}
+                            name='confirmPassword'
+                            value={registerData.confirmPassword}
+                            type='password'
+                            placeholder='Confirm Password'
                             required
                             disabled={isLoading}
-                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50' 
+                            className='w-full border-[1px] rounded-lg ps-3 py-1 border-slate-300 placeholder:text-sm disabled:opacity-50'
                         />
                     </div>
 
                     <div className='flex justify-center items-center my-1 '>
-                        <button 
-                            className='bg-Primary w-full py-1 rounded-lg text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed' 
+                        <button
+                            className='bg-Primary w-full py-1 rounded-lg text-white font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed'
                             type='submit'
                             disabled={isLoading}
                         >
                             {isLoading ? 'Creating Account...' : `Create ${registerData.role} Account`}
                         </button>
                     </div>
-                    
+
                     <div>
                         <p className={`text-center font-semibold py-1  ${messageType === 'failed' ? 'text-red-700' : 'text-Primary'}`}>
                             {message}
