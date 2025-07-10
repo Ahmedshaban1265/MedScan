@@ -4,7 +4,6 @@ import icon3 from "./src/assets/icons/microscope3.png";
 import icon4 from "./src/assets/icons/microscope4.png";
 import meet1 from "./src/assets/meet1.png";
 import meet2 from "./src/assets/meet2.png";
-// Base navbar data for all users
 const baseNavbarData = [
 	{
 		name: "Home",
@@ -24,27 +23,22 @@ const baseNavbarData = [
 	},
 ];
 
-// Booking item for patients only
 const bookingNavItem = {
 	name: "Booking",
 	path: "/booking",
 };
 
-// Function to get navbar data based on user role
 export const getNavbarData = (userRole) => {
-	// If user is a doctor, don't show booking
 	if (userRole === "Doctor") {
 		return baseNavbarData;
 	}
 
-	// For patients and non-logged users, show booking
-	// Insert booking after Services (index 1)
+	
 	const navData = [...baseNavbarData];
 	navData.splice(2, 0, bookingNavItem);
 	return navData;
 };
 
-// Default export for backward compatibility (shows booking for non-logged users)
 export const NavbarData = getNavbarData();
 
 export const whySectionData = [

@@ -14,7 +14,6 @@ const AllAppointments = () => {
     const [dateFilter, setDateFilter] = useState('all');
     const [updatingAppointments, setUpdatingAppointments] = useState(new Set());
 
-    // Status mapping for API
     const statusMap = {
         'Pending': 0,
         'Confirmed': 1,
@@ -27,7 +26,6 @@ const AllAppointments = () => {
         2: 'Completed'
     };
 
-    // Fetch all appointments
     const fetchAppointments = async () => {
         try {
             setLoading(true);
@@ -63,7 +61,6 @@ const AllAppointments = () => {
         }
     };
 
-    // Update appointment status with improved feedback
     const updateAppointmentStatus = async (appointmentId, statusText) => {
         const status = statusMap[statusText];
         const token = localStorage.getItem('token');
@@ -72,7 +69,6 @@ const AllAppointments = () => {
             return;
         }
 
-        // Add to updating set
         setUpdatingAppointments(prev => new Set(prev).add(appointmentId));
 
         try {
@@ -86,7 +82,6 @@ const AllAppointments = () => {
             });
 
             if (response.ok) {
-                // Immediately update local state
                 const updateAppointmentInList = (appointments) => 
                     appointments.map(apt => 
                         apt.id === appointmentId 
@@ -97,7 +92,6 @@ const AllAppointments = () => {
                 setAppointments(prev => updateAppointmentInList(prev));
                 setFilteredAppointments(prev => updateAppointmentInList(prev));
 
-                // Show success message
                 alert(`Appointment ${statusText.toLowerCase()} successfully!`);
             } else {
                 const errText = await response.text();
@@ -108,7 +102,6 @@ const AllAppointments = () => {
             console.error('Error updating appointment status:', err);
             alert('Network error. Please check your connection and try again.');
         } finally {
-            // Remove from updating set
             setUpdatingAppointments(prev => {
                 const newSet = new Set(prev);
                 newSet.delete(appointmentId);
@@ -117,7 +110,6 @@ const AllAppointments = () => {
         }
     };
 
-    // Delete appointment
     const deleteAppointment = async (appointmentId) => {
         if (!window.confirm('Are you sure you want to delete this appointment?')) {
             return;
@@ -141,7 +133,6 @@ const AllAppointments = () => {
             });
 
             if (response.ok) {
-                // Remove from local state
                 setAppointments(prev => prev.filter(apt => apt.id !== appointmentId));
                 setFilteredAppointments(prev => prev.filter(apt => apt.id !== appointmentId));
                 alert('Appointment deleted successfully!');
@@ -162,11 +153,9 @@ const AllAppointments = () => {
         }
     };
 
-    // Filter appointments based on search and filters
     useEffect(() => {
         let filtered = appointments;
 
-        // Search filter
         if (searchTerm) {
             filtered = filtered.filter(apt => 
                 (apt.patient?.firstName?.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -176,12 +165,12 @@ const AllAppointments = () => {
             );
         }
 
-        // Status filter
+        
         if (statusFilter !== 'all') {
             filtered = filtered.filter(apt => statusNames[apt.status] === statusFilter);
         }
 
-        // Date filter
+        
         if (dateFilter !== 'all') {
             const today = new Date();
             const tomorrow = new Date(today);
@@ -227,7 +216,6 @@ const AllAppointments = () => {
     return (
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Header */}
                 <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
                     <div className="flex justify-between items-center">
                         <div>
@@ -257,10 +245,8 @@ const AllAppointments = () => {
                     </div>
                 )}
 
-                {/* Filters */}
                 <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {/* Search */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Search Patients
@@ -274,7 +260,6 @@ const AllAppointments = () => {
                             />
                         </div>
 
-                        {/* Status Filter */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Status
@@ -291,7 +276,6 @@ const AllAppointments = () => {
                             </select>
                         </div>
 
-                        {/* Date Filter */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Date
@@ -311,14 +295,12 @@ const AllAppointments = () => {
                     </div>
                 </div>
 
-                {/* Results Summary */}
                 <div className="mb-6">
                     <p className="text-gray-600">
                         Showing {filteredAppointments.length} of {appointments.length} appointments
                     </p>
                 </div>
 
-                {/* Appointments List */}
                 <div className="bg-white rounded-lg shadow-sm overflow-hidden">
                     {filteredAppointments.length === 0 ? (
                         <div className="text-center py-12">

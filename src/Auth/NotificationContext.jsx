@@ -18,21 +18,17 @@ export const NotificationProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const { user } = useAuth();
 
-    // Fetch notifications when user logs in
     useEffect(() => {
         if (user) {
             fetchNotifications();
-            // Set up polling for new notifications every 30 seconds
             const interval = setInterval(fetchNotifications, 30000);
             return () => clearInterval(interval);
         } else {
-            // Clear notifications when user logs out
             setNotifications([]);
             setUnreadCount(0);
         }
     }, [user]);
 
-    // Update unread count when notifications change
     useEffect(() => {
         const count = notifications.filter(notif => !notif.isRead).length;
         setUnreadCount(count);

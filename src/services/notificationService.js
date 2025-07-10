@@ -1,11 +1,9 @@
 const API_BASE_URL = 'https://medscanapi.runasp.net/api';
 
-// Get auth token from localStorage
 const getAuthToken = () => {
   return localStorage.getItem('token') || localStorage.getItem('authToken');
 };
 
-// Create headers with authorization
 const createHeaders = () => {
   const token = getAuthToken();
   return {
@@ -14,9 +12,7 @@ const createHeaders = () => {
   };
 };
 
-// Notification API service
 export const notificationService = {
-  // Get all notifications for the current user
   async getNotifications() {
     try {
       const response = await fetch(`${API_BASE_URL}/Notification`, {
@@ -36,7 +32,6 @@ export const notificationService = {
     }
   },
 
-  // Mark a notification as read
   async markAsRead(notificationId) {
     try {
       const response = await fetch(`${API_BASE_URL}/Notification/${notificationId}/mark-as-read`, {
@@ -55,7 +50,6 @@ export const notificationService = {
     }
   },
 
-  // Mark all notifications as read
   async markAllAsRead() {
     try {
       const response = await fetch(`${API_BASE_URL}/Notification/mark-all-as-read`, {
@@ -74,7 +68,6 @@ export const notificationService = {
     }
   },
 
-  // Delete a notification
   async deleteNotification(notificationId) {
     try {
       const response = await fetch(`${API_BASE_URL}/Notification/${notificationId}`, {

@@ -16,11 +16,9 @@ const Navbar = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  // Refs for dropdown menus
   const userDropdownRef = useRef(null)
   const notificationDropdownRef = useRef(null)
 
-  // Notification dropdown state
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] = useState(false)
 
   const storedUsername = localStorage.getItem('userName')
@@ -78,18 +76,15 @@ const Navbar = () => {
     }
   }
 
-  // Get navbar data based on user role
   const navbarData = getNavbarData(userRole)
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   
-  // Notification handlers
   const handleNotificationClick = () => {
     setIsNotificationDropdownOpen(!isNotificationDropdownOpen)
   }
 
   const handleNotificationUpdate = (updatedNotifications) => {
-    // This will be handled by the NotificationContext
   }
 
   const handlelogout = () => {
@@ -145,12 +140,10 @@ const Navbar = () => {
       setToggle(false)
     }
     
-    // Close user dropdown if clicking outside
     if (isDropdownOpen && userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
       setIsDropdownOpen(false)
     }
     
-    // Close notification dropdown if clicking outside
     if (isNotificationDropdownOpen && notificationDropdownRef.current && !notificationDropdownRef.current.contains(event.target)) {
       setIsNotificationDropdownOpen(false)
     }
