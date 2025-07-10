@@ -196,7 +196,6 @@ const DoctorProfile = () => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Profile Information */}
                     <div className="lg:col-span-2">
                         <div className="bg-white rounded-lg shadow-sm p-6">
                             <div className="flex items-center justify-between mb-6">
@@ -342,9 +341,7 @@ const DoctorProfile = () => {
                         </div>
                     </div>
 
-                    {/* Sidebar */}
                     <div className="space-y-6">
-                        {/* Profile Summary */}
                         <div className="bg-white rounded-lg shadow-sm p-6 text-center">
                             <div className="w-24 h-24 bg-Primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
                                 {getInitials()}
@@ -362,7 +359,6 @@ const DoctorProfile = () => {
                             </button>
                         </div>
 
-                        {/* Quick Stats */}
                         <div className="bg-white rounded-lg shadow-sm p-6">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
                             <div className="space-y-3">
@@ -385,7 +381,6 @@ const DoctorProfile = () => {
                             </div>
                         </div>
 
-                        {/* Quick Actions */}
                         <div className="bg-white rounded-lg shadow-sm p-6">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
                             <div className="space-y-3">

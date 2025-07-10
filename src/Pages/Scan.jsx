@@ -111,7 +111,6 @@ const Scan = () => {
                         type='file'
                         accept="image/*"
                     />
-                    {/* <p className='text-sm py-2'>{fileName}</p> */}
                 </div>
                 {uploadedImage && (
                     <div className="mt-4">

@@ -4,7 +4,7 @@ import logo from '../assets/logo1.png'
 import { Link } from 'react-router-dom'
 
 const ResetPassword = () => {
-    const [step, setStep] = useState(1) // 1: request reset, 2: verify code, 3: new password
+    const [step, setStep] = useState(1) 
     const [email, setEmail] = useState('')
     const [resetCode, setResetCode] = useState('')
     const [newPassword, setNewPassword] = useState('')

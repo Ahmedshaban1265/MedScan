@@ -89,7 +89,6 @@ const PatientProfile = () => {
         }
     };
 
-    // Update profile
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
         try {

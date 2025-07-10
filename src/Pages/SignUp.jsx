@@ -39,7 +39,6 @@ const SignUp = () => {
         e.preventDefault();
         setIsLoading(true);
 
-        // Basic validation
         if (registerData.password !== registerData.confirmPassword) {
             setMessage('Passwords do not match')
             setMessageType('failed')
@@ -56,7 +55,6 @@ const SignUp = () => {
             return
         }
 
-        // Validate doctor-specific fields
         if (registerData.role === 'Doctor') {
             if (!registerData.specialization.trim()) {
                 setMessage('Specialization is required for doctors')
@@ -67,7 +65,6 @@ const SignUp = () => {
             }
         }
 
-        // Prepare data for API with PascalCase keys and without 'dto' wrapper
         const apiData = {
             FirstName: registerData.firstName,
             LastName: registerData.lastName,
@@ -94,7 +91,7 @@ const SignUp = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(apiData), // Removed 'dto' wrapper
+                body: JSON.stringify(apiData), 
             })
 
             const responseData = await response.json()
@@ -105,7 +102,6 @@ const SignUp = () => {
 
                 console.log('Registration successful:', responseData)
 
-                // Auto login after successful registration
                 if (responseData.data?.userName || responseData.data?.email) {
                     login(responseData.data.userName || responseData.data.email)
                     setAuth(true)
@@ -129,7 +125,6 @@ const SignUp = () => {
             setIsLoading(false);
         }
 
-        // Clear form
         setRegisterData({
             firstName: '',
             lastName: '',
@@ -146,7 +141,6 @@ const SignUp = () => {
             profilePictureUrl: ''
         })
 
-        // Clear message after 5 seconds
         setTimeout(() => {
             setMessage('')
         }, 5000)
@@ -162,7 +156,6 @@ const SignUp = () => {
                 <form onSubmit={handleSubmit} className='bg-white w-full lg:w-1/2 h-full lg:w-1/2 overflow-y-auto  rounded-e-3xl px-8 py-5'>
                     <h2 className='text-center font-semibold text-2xl py-3'>Create your account!</h2>
 
-                    {/* Account Type Selection - Dropdown */}
                     <div className='py-2'>
                         <label className='block mb-2 text-[14px] font-semibold'>Account Type</label>
                         <select
@@ -231,7 +224,6 @@ const SignUp = () => {
                         />
                     </div>
 
-                    {/* Doctor-specific fields */}
                     {registerData.role === 'Doctor' && (
                         <>
                             <div className='py-1'>

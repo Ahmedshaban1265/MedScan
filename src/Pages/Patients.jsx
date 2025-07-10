@@ -14,7 +14,6 @@ const Patients = () => {
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [showPatientModal, setShowPatientModal] = useState(false);
 
-    // Fetch appointments and extract unique patients
     const fetchPatients = async () => {
         try {
             setLoading(true);
@@ -36,7 +35,6 @@ const Patients = () => {
             if (response.ok) {
                 const appointments = await response.json();
                 
-                // Extract unique patients from appointments
                 const patientsMap = new Map();
                 
                 appointments.forEach(appointment => {
@@ -64,14 +62,12 @@ const Patients = () => {
                         patient.appointments.push(appointment);
                         patient.totalAppointments++;
                         
-                        // Count appointment statuses
                         switch (appointment.status) {
                             case 0: patient.pendingAppointments++; break;
                             case 1: patient.confirmedAppointments++; break;
                             case 2: patient.completedAppointments++; break;
                         }
                         
-                        // Find last and next appointments
                         const appointmentDate = new Date(appointment.appointmentDate);
                         const now = new Date();
                         
@@ -103,11 +99,9 @@ const Patients = () => {
         }
     };
 
-    // Filter and sort patients
     useEffect(() => {
         let filtered = patients;
 
-        // Search filter
         if (searchTerm) {
             filtered = filtered.filter(patient => 
                 patient.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -116,7 +110,6 @@ const Patients = () => {
             );
         }
 
-        // Sort patients
         filtered.sort((a, b) => {
             switch (sortBy) {
                 case 'name':
@@ -141,7 +134,6 @@ const Patients = () => {
         fetchPatients();
     }, []);
 
-    // Patient Details Modal
     const PatientModal = ({ patient, onClose }) => {
         if (!patient) return null;
 
@@ -169,7 +161,6 @@ const Patients = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                        {/* Patient Info */}
                         <div className="bg-gray-50 rounded-lg p-4">
                             <h4 className="font-semibold text-gray-900 mb-3">Contact Information</h4>
                             <div className="space-y-2">
@@ -178,7 +169,6 @@ const Patients = () => {
                             </div>
                         </div>
 
-                        {/* Appointment Stats */}
                         <div className="bg-blue-50 rounded-lg p-4">
                             <h4 className="font-semibold text-gray-900 mb-3">Appointment Statistics</h4>
                             <div className="space-y-2">
@@ -189,7 +179,6 @@ const Patients = () => {
                             </div>
                         </div>
 
-                        {/* Recent Activity */}
                         <div className="bg-green-50 rounded-lg p-4">
                             <h4 className="font-semibold text-gray-900 mb-3">Recent Activity</h4>
                             <div className="space-y-2">
@@ -209,7 +198,6 @@ const Patients = () => {
                         </div>
                     </div>
 
-                    {/* Appointments History */}
                     <div>
                         <h4 className="font-semibold text-gray-900 mb-4">Appointment History</h4>
                         <div className="overflow-x-auto">
@@ -291,7 +279,6 @@ const Patients = () => {
     return (
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Header */}
                 <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
                     <div className="flex justify-between items-center">
                         <div>
@@ -321,7 +308,6 @@ const Patients = () => {
                     </div>
                 )}
 
-                {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <div className="bg-white rounded-lg shadow-sm p-6">
                         <div className="flex items-center">
@@ -386,10 +372,8 @@ const Patients = () => {
                     </div>
                 </div>
 
-                {/* Filters */}
                 <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Search */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Search Patients
@@ -403,7 +387,6 @@ const Patients = () => {
                             />
                         </div>
 
-                        {/* Sort */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Sort By
@@ -422,14 +405,12 @@ const Patients = () => {
                     </div>
                 </div>
 
-                {/* Results Summary */}
                 <div className="mb-6">
                     <p className="text-gray-600">
                         Showing {filteredPatients.length} of {patients.length} patients
                     </p>
                 </div>
 
-                {/* Patients Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredPatients.length === 0 ? (
                         <div className="col-span-full text-center py-12">
@@ -499,7 +480,6 @@ const Patients = () => {
                     )}
                 </div>
 
-                {/* Patient Modal */}
                 {showPatientModal && selectedPatient && (
                     <PatientModal 
                         patient={selectedPatient} 

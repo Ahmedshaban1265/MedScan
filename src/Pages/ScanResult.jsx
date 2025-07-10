@@ -7,11 +7,9 @@ const ScanResult = () => {
     const { selectedDisease, uploadedImage, scanResults } = location.state || {}
     const { user } = useAuth()
     
-    // Get user role from localStorage or user object
     const storedRole = localStorage.getItem("userRole")
     const userRole = user?.role || storedRole
 
-    // If no scanResults are passed, display an error or default to mock data
     if (!scanResults) {
         return (
             <section className='min-h-screen bg-gray-50 py-20'>
@@ -37,7 +35,6 @@ const ScanResult = () => {
                 <h1 className='text-4xl font-bold text-center text-gray-800 mb-12'>Scan Result</h1>
                 
                 <div className='grid grid-cols-1 lg:grid-cols-2 gap-12'>
-                    {/* Image Section */}
                     <div className='bg-white rounded-2xl shadow-lg p-8'>
                         <h2 className='text-2xl font-semibold text-gray-800 mb-6'>Uploaded Image</h2>
                         <div className='bg-black rounded-xl overflow-hidden'>
@@ -62,7 +59,6 @@ const ScanResult = () => {
                         </div>
                     </div>
 
-                    {/* Segmentation Result Section (Conditional) */}
                     {selectedDisease === 'Brain Tumor' && scanResults.segmentation_image_base64 && (
                         <div className='bg-white rounded-2xl shadow-lg p-8'>
                             <h2 className='text-2xl font-semibold text-gray-800 mb-6'>Segmentation Result</h2>
@@ -77,9 +73,7 @@ const ScanResult = () => {
                         </div>
                     )}
 
-                    {/* Results Section */}
                     <div className='space-y-6'>
-                        {/* Disease Type */}
                         <div className='bg-white rounded-2xl shadow-lg p-8'>
                             <h2 className='text-2xl font-semibold text-gray-800 mb-4'>Type of disease:</h2>
                             <p className='text-lg text-gray-600 font-medium'>{scanResults.diagnosis}</p>
@@ -91,7 +85,6 @@ const ScanResult = () => {
                             </div>
                         </div>
 
-                        {/* About Disease */}
                         <div className='bg-white rounded-2xl shadow-lg p-8'>
                             <h2 className='text-2xl font-semibold text-gray-800 mb-4'>About this disease:</h2>
                             <p className='text-gray-600 leading-relaxed whitespace-pre-line'>
@@ -99,7 +92,6 @@ const ScanResult = () => {
                             </p>
                         </div>
 
-                        {/* Recommendations */}
                         <div className='bg-white rounded-2xl shadow-lg p-8'>
                             <h2 className='text-2xl font-semibold text-gray-800 mb-4'>Recommendations:</h2>
                             <ul className='space-y-3'>
@@ -114,7 +106,6 @@ const ScanResult = () => {
                             </ul>
                         </div>
 
-                        {/* Action Buttons */}
                         <div className='flex gap-4'>
                             <button 
                                 onClick={() => window.history.back()}
@@ -128,7 +119,6 @@ const ScanResult = () => {
                             >
                                 Download Report
                             </button>
-                            {/* Only show Book Appointment button for patients */}
                             {userRole !== "Doctor" && (
                                 <button 
                                     onClick={() => window.location.href = '/booking'}
@@ -141,7 +131,6 @@ const ScanResult = () => {
                     </div>
                 </div>
 
-                {/* Disclaimer */}
                 <div className='mt-12 bg-yellow-50 border border-yellow-200 rounded-xl p-6'>
                     <div className='flex items-start'>
                         <svg className='w-6 h-6 text-yellow-600 mr-3 mt-0.5' fill='currentColor' viewBox='0 0 20 20'>

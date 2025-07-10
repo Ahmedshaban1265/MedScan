@@ -7,7 +7,6 @@ import google from '../assets/icons/google.png'
 import { useAuth } from '../Auth/AuthProvider'
 import { Link, useNavigate } from 'react-router-dom'
 
-// Helper function to decode JWT
 const decodeJwt = (token) => {
     try {
         const base64Url = token.split('.')[1];
@@ -60,7 +59,7 @@ const Login = () => {
                 setMessage('Login successful!')
                 setMessageType('success')
 
-                const token = responseData.data; // The JWT token itself
+                const token = responseData.data; 
                 localStorage.setItem('token', token);
 
                 const decodedToken = decodeJwt(token);
@@ -100,11 +99,9 @@ const Login = () => {
             setIsLoading(false);
         }
 
-        // Clear form
         setMail('')
         setPassword('')
 
-        // Clear message after 5 seconds
         setTimeout(() => {
             setMessage('')
         }, 5000)
