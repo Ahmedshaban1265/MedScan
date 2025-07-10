@@ -28,14 +28,12 @@ const DoctorProfile = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    // Get user initials for avatar
     const getInitials = () => {
         const firstName = profileData.firstName || 'D';
         const lastName = profileData.lastName || 'R';
         return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
     };
 
-    // Fetch doctor profile data
     const fetchProfileData = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -76,13 +74,13 @@ const DoctorProfile = () => {
         }
     };
 
-    // Fetch doctor statistics
+
     const fetchDoctorStats = async () => {
         try {
             const token = localStorage.getItem('token');
             if (!token) return;
 
-            // Fetch appointments to calculate stats
+
             const appointmentsResponse = await fetch('https://medscanapi.runasp.net/api/Appointment', {
                 method: 'GET',
                 headers: {
@@ -98,14 +96,14 @@ const DoctorProfile = () => {
                     new Date(apt.appointmentDate).toDateString() === today
                 );
 
-                // Calculate unique patients
+
                 const uniquePatients = new Set(appointments.map(apt => apt.patientId)).size;
 
                 setStats({
                     totalAppointments: appointments.length,
                     patientsToday: todayAppointments.length,
                     totalPatients: uniquePatients,
-                    yearsOfExperience: 8 // This would come from profile data
+                    yearsOfExperience: 8 
                 });
             }
         } catch (err) {
@@ -113,7 +111,7 @@ const DoctorProfile = () => {
         }
     };
 
-    // Update profile
+
     const handleUpdateProfile = async (e) => {
         e.preventDefault();
         try {
@@ -145,18 +143,13 @@ const DoctorProfile = () => {
         }
     };
 
-    // Quick Actions Functions
+
     const handleViewPatients = () => {
         navigate('/patients');
     };
 
     const handleManageSchedule = () => {
-        // You can either navigate to a separate page or add a modal
-        // To navigate to a separate page:
         navigate('/schedule-management');
-        
-        // Or if you want to add a modal like in Dashboard:
-        // setShowScheduleModal(true);
     };
 
     useEffect(() => {

@@ -9,7 +9,7 @@ const NotificationDropdown = ({ isOpen, onClose, onNotificationUpdate }) => {
     const [error, setError] = useState(null);
     const dropdownRef = useRef(null);
 
-    // Close dropdown when clicking outside
+
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -26,7 +26,6 @@ const NotificationDropdown = ({ isOpen, onClose, onNotificationUpdate }) => {
         };
     }, [isOpen, onClose]);
 
-    // Fetch notifications when dropdown opens
     useEffect(() => {
         if (isOpen) {
             fetchNotifications();
@@ -95,7 +94,6 @@ const NotificationDropdown = ({ isOpen, onClose, onNotificationUpdate }) => {
             className="fixed inset-0 z-50 bg-black bg-opacity-50 sm:bg-transparent sm:inset-auto sm:absolute sm:top-full sm:right-0 sm:mt-2 sm:z-50"
         >
             <div className="bg-white w-full h-full sm:h-auto sm:max-h-[400px] sm:w-[90vw] sm:max-w-sm sm:rounded-lg sm:shadow-xl sm:border sm:border-gray-200 overflow-y-auto">
-                {/* Header */}
                 <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
 
@@ -108,7 +106,6 @@ const NotificationDropdown = ({ isOpen, onClose, onNotificationUpdate }) => {
                                 Mark all as read
                             </button>
                         )}
-                        {/* Close button for mobile */}
                         <button
                             onClick={onClose}
                             className="sm:hidden text-gray-500 hover:text-gray-700 focus:outline-none"
@@ -121,14 +118,14 @@ const NotificationDropdown = ({ isOpen, onClose, onNotificationUpdate }) => {
                     </div>
                 </div>
 
-                {/* Unread message count */}
+
                 {unreadCount > 0 && (
                     <p className="text-sm text-gray-600 px-4 mt-1">
                         You have {unreadCount} unread notification{unreadCount > 1 ? 's' : ''}
                     </p>
                 )}
 
-                {/* Content */}
+               
                 <div className="p-4">
                     {loading ? (
                         <div className="text-center">
@@ -168,7 +165,6 @@ const NotificationDropdown = ({ isOpen, onClose, onNotificationUpdate }) => {
                     )}
                 </div>
 
-                {/* Footer */}
                 {notifications.length > 0 && (
                     <div className="p-3 border-t border-gray-200 bg-gray-50">
                         <Link

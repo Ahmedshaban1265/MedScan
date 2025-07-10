@@ -3,8 +3,7 @@ import { useAuth } from '../Auth/AuthProvider'
 
 const PrivateRoute = ({ children }) => {
     const { auth, isLoading } = useAuth()
-
-    // Show loading spinner while checking authentication
+    
     if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -15,8 +14,6 @@ const PrivateRoute = ({ children }) => {
             </div>
         )
     }
-
-    // Only redirect to login if not loading and not authenticated
     return auth ? children : <Navigate to="/login" />
 }
 

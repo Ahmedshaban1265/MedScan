@@ -21,7 +21,7 @@ const DoctorDashboard = () => {
     const [showAddAppointmentModal, setShowAddAppointmentModal] = useState(false);
     const [showScheduleModal, setShowScheduleModal] = useState(false);
 
-    // Get user name for welcome message
+
     const getDoctorName = () => {
         const storedFirstName = localStorage.getItem('firstName');
         const storedUserData = localStorage.getItem('user');
@@ -41,7 +41,7 @@ const DoctorDashboard = () => {
         return 'Doctor';
     };
 
-    // Fetch dashboard data
+
     const fetchDashboardData = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -51,7 +51,6 @@ const DoctorDashboard = () => {
                 return;
             }
 
-            // Fetch appointments
             const appointmentsResponse = await fetch('https://medscanapi.runasp.net/api/Appointment', {
                 method: 'GET',
                 headers: {
@@ -63,7 +62,6 @@ const DoctorDashboard = () => {
             if (appointmentsResponse.ok) {
                 const appointments = await appointmentsResponse.json();
 
-                // Filter appointments for today
                 const today = new Date();
                 const todayString = today.toDateString();
 
@@ -72,16 +70,13 @@ const DoctorDashboard = () => {
                     return aptDate.toDateString() === todayString;
                 });
 
-                // Filter upcoming appointments (next 7 days)
                 const nextWeek = new Date();
                 nextWeek.setDate(today.getDate() + 7);
 
                 const upcomingAppointments = appointments.filter(apt => {
                     const aptDate = new Date(apt.appointmentDate);
                     return aptDate > today && aptDate <= nextWeek;
-                }).slice(0, 5); // Show only next 5 appointments
-
-                // Calculate stats
+                }).slice(0, 5); 
                 const thisWeek = new Date();
                 thisWeek.setDate(today.getDate() - 7);
 
@@ -123,7 +118,6 @@ const DoctorDashboard = () => {
         2: 'Completed'
     };
 
-    // Update appointment status with improved UI feedback
     const updateAppointmentStatus = async (appointmentId, statusText) => {
         const status = statusMap[statusText];
         const token = localStorage.getItem('token');
@@ -132,7 +126,6 @@ const DoctorDashboard = () => {
             return;
         }
 
-        // Show loading state
         const buttonElement = document.querySelector(`[data-appointment-id="${appointmentId}"][data-action="${statusText}"]`);
         if (buttonElement) {
             buttonElement.disabled = true;
@@ -150,12 +143,12 @@ const DoctorDashboard = () => {
             });
 
             if (response.ok) {
-                // Immediately update the local state for better UX
+
                 setDashboardData(prevData => {
                     const updateAppointmentInList = (appointments) => 
                         appointments.map(apt => 
                             apt.id === appointmentId 
-                                ? { ...apt, status: status } // Use numeric status
+                                ? { ...apt, status: status } 
                                 : apt
                         );
 
@@ -166,7 +159,6 @@ const DoctorDashboard = () => {
                     };
                 });
 
-                // Then fetch fresh data from server
                 await fetchDashboardData();
                 alert(`Appointment ${statusText.toLowerCase()} successfully!`);
             } else {
@@ -178,7 +170,6 @@ const DoctorDashboard = () => {
             console.error('Error updating appointment status:', err);
             alert('Network error. Please check your connection and try again.');
         } finally {
-            // Reset button state
             if (buttonElement) {
                 buttonElement.disabled = false;
                 buttonElement.textContent = statusText;
@@ -186,7 +177,6 @@ const DoctorDashboard = () => {
         }
     };
 
-    // Quick Actions Functions
     const handleAddNewAppointment = () => {
         setShowAddAppointmentModal(true);
     };
@@ -199,7 +189,6 @@ const DoctorDashboard = () => {
         setShowScheduleModal(true);
     };
 
-    // Add New Appointment Modal Component
     const AddAppointmentModal = () => {
         const [appointmentData, setAppointmentData] = useState({
             patientEmail: '',
@@ -221,7 +210,6 @@ const DoctorDashboard = () => {
                     return;
                 }
 
-                // Combine date and time
                 const appointmentDateTime = new Date(`${appointmentData.appointmentDate}T${appointmentData.appointmentTime}`);
 
                 const response = await fetch('https://medscanapi.runasp.net/api/Appointment', {
@@ -248,7 +236,7 @@ const DoctorDashboard = () => {
                         appointmentType: 'Routine Checkup',
                         notes: ''
                     });
-                    fetchDashboardData(); // Refresh data
+                    fetchDashboardData(); د
                 } else {
                     const errorText = await response.text();
                     alert(`Failed to create appointment: ${errorText}`);
@@ -370,7 +358,6 @@ const DoctorDashboard = () => {
         );
     };
 
-    // Schedule Management Modal Component
     const ScheduleModal = () => {
         const [scheduleData, setScheduleData] = useState({
             workingDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
@@ -393,7 +380,7 @@ const DoctorDashboard = () => {
         };
 
         const handleSaveSchedule = () => {
-            // Here you would typically save to API
+
             alert('Schedule settings saved successfully!');
             setShowScheduleModal(false);
         };
@@ -414,7 +401,7 @@ const DoctorDashboard = () => {
                     </div>
 
                     <div className="space-y-6">
-                        {/* Working Days */}
+
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Working Days
@@ -434,7 +421,6 @@ const DoctorDashboard = () => {
                             </div>
                         </div>
 
-                        {/* Working Hours */}
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -459,8 +445,6 @@ const DoctorDashboard = () => {
                                 />
                             </div>
                         </div>
-
-                        {/* Break Time */}
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -486,7 +470,6 @@ const DoctorDashboard = () => {
                             </div>
                         </div>
 
-                        {/* Appointment Duration */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Appointment Duration (minutes)
@@ -539,7 +522,6 @@ const DoctorDashboard = () => {
     return (
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Header */}
                 <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
                     <div className="flex justify-between items-center">
                         <div>
@@ -574,7 +556,7 @@ const DoctorDashboard = () => {
                     </div>
                 )}
 
-                {/* Stats Cards */}
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div className="bg-white rounded-lg shadow-sm p-6">
                         <div className="flex items-center">
@@ -623,7 +605,6 @@ const DoctorDashboard = () => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Today's Appointments */}
                     <div className="bg-white rounded-lg shadow-sm p-6">
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-xl font-semibold text-gray-900">Appointments Today</h2>
@@ -695,8 +676,6 @@ const DoctorDashboard = () => {
                             </div>
                         )}
                     </div>
-
-                    {/* Upcoming Appointments */}
                     <div className="bg-white rounded-lg shadow-sm p-6">
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-xl font-semibold text-gray-900">Upcoming Appointments</h2>
@@ -746,7 +725,7 @@ const DoctorDashboard = () => {
                     </div>
                 </div>
 
-                {/* Quick Actions */}
+
                 <div className="mt-8 bg-white rounded-lg shadow-sm p-6">
                     <h2 className="text-xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
                     <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -802,7 +781,6 @@ const DoctorDashboard = () => {
                     </div>
                 </div>
 
-                {/* Modals */}
                 {showAddAppointmentModal && <AddAppointmentModal />}
                 {showScheduleModal && <ScheduleModal />}
             </div>

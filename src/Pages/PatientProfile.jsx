@@ -21,14 +21,14 @@ const PatientProfile = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    // Get user initials for avatar
+
     const getInitials = () => {
         const firstName = profileData.firstName || 'U';
         const lastName = profileData.lastName || '';
         return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
     };
 
-    // Fetch user profile data
+
     const fetchProfileData = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -67,7 +67,6 @@ const PatientProfile = () => {
         }
     };
 
-    // Fetch appointments
     const fetchAppointments = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -83,7 +82,7 @@ const PatientProfile = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                setAppointments(data.slice(0, 3)); // Show only recent 3 appointments
+                setAppointments(data.slice(0, 3)); 
             }
         } catch (err) {
             console.error('Error fetching appointments:', err);
@@ -138,15 +137,15 @@ const PatientProfile = () => {
     return (
         <div className="min-h-screen bg-gray-50 py-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Header */}
+                
                 <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
                     <div className="flex flex-col md:flex-row md:justify-between md:items-center">
-                        <div className="mb-4 md:mb-0"> {/* إضافة هامش سفلي على الجوال، وإزالته على الشاشات الأكبر */}
+                        <div className="mb-4 md:mb-0"> 
                             <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
                             <p className="text-gray-600 mt-1">Manage your personal information and appointments</p>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row gap-4 mt-4 md:mt-0"> {/* إضافة هامش علوي على الجوال، وإزالته على الشاشات الأكبر */}
+                        <div className="flex flex-col sm:flex-row gap-4 mt-4 md:mt-0"> 
                             <Link
                                 to="/"
                                 className="w-full sm:w-auto px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
@@ -174,7 +173,7 @@ const PatientProfile = () => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Profile Information */}
+
                     <div className="lg:col-span-2">
                         <div className="bg-white rounded-lg shadow-sm p-6">
                             <div className="flex items-center justify-between mb-6">
@@ -292,9 +291,9 @@ const PatientProfile = () => {
                         </div>
                     </div>
 
-                    {/* Sidebar */}
+                    
                     <div className="space-y-6">
-                        {/* Profile Summary */}
+                        
                         <div className="bg-white rounded-lg shadow-sm p-6 text-center">
                             <div className="w-24 h-24 bg-Primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
                                 {getInitials()}
@@ -308,7 +307,6 @@ const PatientProfile = () => {
                             </button>
                         </div>
 
-                        {/* Health Summary */}
                         <div className="bg-white rounded-lg shadow-sm p-6">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4">Health Summary</h3>
                             <div className="space-y-3">
@@ -331,7 +329,6 @@ const PatientProfile = () => {
                             </div>
                         </div>
 
-                        {/* Recent Appointments */}
                         <div className="bg-white rounded-lg shadow-sm p-6">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Appointments</h3>
                             {appointments.length > 0 ? (
